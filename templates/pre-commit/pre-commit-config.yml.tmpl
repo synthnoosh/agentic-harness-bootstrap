@@ -1,0 +1,51 @@
+---
+variables:
+  is_python: "Boolean — set to true for Python projects"
+  is_go: "Boolean — set to true for Go projects"
+---
+
+# .pre-commit-config.yaml — pre-commit framework configuration
+#
+# Install: pip install pre-commit && pre-commit install
+# Run manually: pre-commit run --all-files
+
+repos:
+  # ── Common hooks ──────────────────────────────────────────────
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+
+{{#is_python}}
+  # ── Python: Ruff (lint + format) ──────────────────────────────
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.7.0
+    hooks:
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
+      - id: ruff-format
+
+  # ── Python: mypy (type checking) ─────────────────────────────
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.12.0
+    hooks:
+      - id: mypy
+        additional_dependencies: []
+{{/is_python}}
+
+{{#is_go}}
+  # ── Go: gofmt ────────────────────────────────────────────────
+  - repo: https://github.com/dnephin/pre-commit-golang
+    rev: v0.5.1
+    hooks:
+      - id: go-fmt
+
+  # ── Go: golangci-lint ────────────────────────────────────────
+  - repo: https://github.com/golangci/golangci-lint
+    rev: v1.61.0
+    hooks:
+      - id: golangci-lint
+{{/is_go}}

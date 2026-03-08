@@ -1,0 +1,21 @@
+---
+variables:
+  lint_cmd: "Lint command (e.g., eslint --fix)"
+  format_cmd: "Format command (e.g., prettier --write)"
+---
+
+# .lintstagedrc.json — lint-staged configuration for Node.js/TypeScript projects
+#
+# Setup instructions:
+#   1. Install dependencies:
+#        npm install --save-dev husky lint-staged
+#   2. Initialize husky:
+#        npx husky init
+#   3. Configure the pre-commit hook:
+#        echo "npx lint-staged" > .husky/pre-commit
+#   4. Place this file as .lintstagedrc.json in the project root.
+
+{
+  "*.{js,jsx,ts,tsx}": ["{{lint_cmd}}", "{{format_cmd}}"],
+  "*.{json,md,yml,yaml}": ["{{format_cmd}}"]
+}

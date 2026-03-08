@@ -1,0 +1,99 @@
+---
+variables:
+  project_name: "Name of the project"
+  primary_language: "Primary programming language"
+  framework: "Primary framework (e.g., Next.js, FastAPI, Spring Boot)"
+  build_cmd: "Command to build the project"
+  test_cmd: "Command to run tests"
+  lint_cmd: "Command to run the linter"
+  format_cmd: "Command to run the formatter"
+  architecture_summary: "Brief summary of the architecture"
+  conventions: "Array of coding convention strings"
+  modules: "Array of {name, path, description} objects"
+  always_rules: "Array of rules the agent must always follow"
+  ask_rules: "Array of rules where the agent should ask before acting"
+  never_rules: "Array of rules the agent must never violate"
+---
+
+# Agent Instructions for {{project_name}}
+
+<!-- Keep in sync with CLAUDE.md and .github/copilot-instructions.md -->
+
+You are working on {{project_name}}, a {{framework}} project written in {{primary_language}}.
+
+## Identity
+
+You are a coding agent operating within the {{project_name}} repository. Your goal is to make correct, minimal, convention-respecting changes. When uncertain, ask rather than guess.
+
+## Commands
+
+```
+build:   {{build_cmd}}
+test:    {{test_cmd}}
+lint:    {{lint_cmd}}
+format:  {{format_cmd}}
+check:   make check    # runs format, lint, build, test in order
+verify:  make verify   # validates harness integrity
+```
+
+Always run `lint` and `test` before considering a task complete.
+
+## Architecture
+
+{{architecture_summary}}
+
+See [ARCHITECTURE.md](./ARCHITECTURE.md) for the full module map and dependency rules.
+
+### Modules
+
+{{#modules}}
+- **{{name}}** (`{{path}}`) — {{description}}
+{{/modules}}
+
+## Conventions
+
+Follow these coding conventions in all changes:
+
+{{#conventions}}
+- {{.}}
+{{/conventions}}
+
+## Boundaries
+
+### Always (non-negotiable)
+
+{{#always_rules}}
+- {{.}}
+{{/always_rules}}
+- Run `make check` before considering a task complete
+- Do not skip pre-commit hooks (`--no-verify`)
+
+### Ask First
+
+Do not proceed with these actions without explicit user approval:
+
+{{#ask_rules}}
+- {{.}}
+{{/ask_rules}}
+
+### Never
+
+These are hard prohibitions. Do not do them under any circumstances:
+
+{{#never_rules}}
+- {{.}}
+{{/never_rules}}
+
+## Harness Maintenance
+
+Apply these standing orders automatically when the triggering condition is met:
+
+1. **Module added** → Add a row to the Module Map in `ARCHITECTURE.md`.
+2. **Command added** → Update the Commands section here and in sibling agent files (`CLAUDE.md`, `.github/copilot-instructions.md`).
+3. **Agent mistake** → Add a Boundaries rule (Always / Ask / Never) to prevent recurrence.
+4. **Architectural decision** → Create a numbered ADR in `docs/adr/` using the project ADR template.
+5. **Session start** → Drift check: verify `ARCHITECTURE.md` modules match real directories, confirm commands work, flag staleness.
+
+<!-- EVOLVE: Add new conventions as patterns emerge -->
+<!-- EVOLVE: Promote Ask rules to Always once validated -->
+<!-- EVOLVE: Update modules list as project grows -->

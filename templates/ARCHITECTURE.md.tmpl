@@ -1,0 +1,64 @@
+---
+variables:
+  project_name: "Name of the project"
+  modules: "Array of {name, path, description} objects"
+  has_layered_architecture: "Boolean — whether the project follows a layered architecture"
+  layers: "Pre-formatted string listing layers bottom to top (e.g., 'Types → Config → Data → Service → Runtime → UI')"
+  dependency_rules: "Rules governing what can import what"
+  primary_language: "Primary programming language of the project"
+---
+
+# {{project_name}} — Architecture Map
+
+{{project_name}} architecture overview.
+
+## System Overview
+
+This document describes the module structure, layering, and dependency rules for {{project_name}}.
+It is the single source of truth for how the codebase is organized and should be kept up to date as the project evolves.
+
+## Module Map
+
+| Module | Path | Purpose |
+|-|-|-|
+{{#modules}}
+| {{name}} | `{{path}}` | {{description}} |
+{{/modules}}
+
+{{#has_layered_architecture}}
+## Layer Diagram
+
+Dependency direction flows downward. A layer may only import from layers below it.
+
+Layers (bottom to top): {{layers}}
+
+{{/has_layered_architecture}}
+## Dependency Rules
+
+{{#dependency_rules}}
+- {{.}}
+{{/dependency_rules}}
+
+{{#has_layered_architecture}}
+General principles:
+- Lower layers MUST NOT import from higher layers.
+- Shared types live in the `types` layer and are importable by all.
+- Side effects (I/O, network, file system) belong in `service` or `runtime` layers only.
+- Config is read once at startup and passed down; modules do not read env vars directly.
+{{/has_layered_architecture}}
+
+## What Doesn't Belong
+
+Each directory has a clear scope. Do not place files outside that scope.
+
+{{#modules}}
+- `{{path}}` — no files unrelated to {{description}}
+{{/modules}}
+
+## Primary Language
+
+This project is written primarily in **{{primary_language}}**.
+
+<!-- EVOLVE: Add new modules to the Module Map table as they are created -->
+<!-- EVOLVE: Update the Layer Diagram if new layers are introduced -->
+<!-- EVOLVE: Revise Dependency Rules when architectural boundaries change -->

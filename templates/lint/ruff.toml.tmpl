@@ -1,0 +1,53 @@
+---
+variables:
+  python_version: "Target Python version (e.g., py312)"
+  src_paths: "Source directories (e.g., ['src', 'tests'])"
+---
+
+# ruff.toml — Strict Ruff configuration for Python projects
+#
+# Ruff replaces flake8, isort, pyupgrade, and more in a single fast tool.
+# Run: ruff check . && ruff format .
+
+target-version = "{{python_version}}"
+src = {{src_paths}}
+line-length = 88  # black-compatible
+
+[lint]
+# Start with ALL stable rules enabled, then selectively ignore.
+select = ["ALL"]
+
+ignore = [
+  # ── Missing docstrings on public modules/packages ─────────
+  # Remove these ignores if your project enforces module-level docstrings.
+  "D100",  # Missing docstring in public module
+  "D101",  # Missing docstring in public class
+  "D102",  # Missing docstring in public method
+  "D103",  # Missing docstring in public function
+  "D104",  # Missing docstring in public package
+
+  # ── Style preferences ─────────────────────────────────────
+  "D203",  # one-blank-line-before-class (conflicts with D211)
+  "D213",  # multi-line-docstring-summary-second-line (conflicts with D212)
+  "COM812",  # missing-trailing-comma (conflicts with formatter)
+  "ISC001",  # single-line-implicit-string-concatenation (conflicts with formatter)
+]
+
+[lint.isort]
+known-first-party = {{src_paths}}
+force-sort-within-sections = true
+combine-as-imports = true
+
+[lint.per-file-ignores]
+# Tests can use assert, magic numbers, and broader imports.
+"tests/**/*.py" = [
+  "S101",    # assert used
+  "PLR2004", # magic value comparison
+  "D",       # docstring rules relaxed in tests
+  "ANN",     # type annotations not required in tests
+]
+
+[format]
+quote-style = "double"
+indent-style = "space"
+docstring-code-format = true

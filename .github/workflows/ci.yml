@@ -1,0 +1,143 @@
+name: Bootstrap CI
+
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  validate-templates:
+    name: Validate Templates
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Validate YAML frontmatter and variable references
+        run: |
+          #!/usr/bin/env bash
+          set -euo pipefail
+
+          errors=0
+
+          for tmpl in $(find templates -name '*.tmpl' -type f); do
+            echo "--- Checking $tmpl ---"
+
+            # Extract frontmatter between --- markers
+            frontmatter=$(awk '/^---$/{n++; next} n==1{print} n==2{exit}' "$tmpl")
+
+            if [ -z "$frontmatter" ]; then
+              echo "  WARN: No YAML frontmatter found, skipping."
+              continue
+            fi
+
+            # Validate frontmatter is valid YAML
+            if ! echo "$frontmatter" | yq eval '.' - > /dev/null 2>&1; then
+              echo "  ERROR: Invalid YAML frontmatter in $tmpl"
+              errors=$((errors + 1))
+              continue
+            fi
+            echo "  Frontmatter: valid YAML"
+
+            # Extract documented variable names from frontmatter
+            documented=$(echo "$frontmatter" | yq eval '.variables | keys | .[]' - 2>/dev/null || true)
+
+            # Extract {{variable}} references from template body (after frontmatter)
+            body=$(awk '/^---$/{n++; next} n>=2{print}' "$tmpl")
+            # Match {{var}}, {{#var}}, {{/var}} — extract just the variable name
+            # Exclude ${{ }} GitHub/GitLab expressions by requiring no preceding $
+            referenced=$(echo "$body" | grep -oP '(?<!\$)\{\{[#/]?([a-zA-Z_][a-zA-Z0-9_]*)\}\}' \
+              | sed 's/[{}#/]//g' | sort -u || true)
+
+            for var in $referenced; do
+              if ! echo "$documented" | grep -qx "$var"; then
+                echo "  ERROR: Variable '{{$var}}' used in template but not documented in frontmatter."
+                errors=$((errors + 1))
+              fi
+            done
+            echo "  Variable references: OK"
+          done
+
+          if [ "$errors" -gt 0 ]; then
+            echo ""
+            echo "FAILED: $errors error(s) found in template validation."
+            exit 1
+          fi
+          echo ""
+          echo "All templates validated successfully."
+
+  check-examples:
+    name: Check Examples
+    needs: validate-templates
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate examples
+        run: scripts/check-examples.sh
+
+  check-sync:
+    name: Check Instruction Sync
+    needs: validate-templates
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Verify instruction files are synchronized
+        run: |
+          #!/usr/bin/env bash
+          set -euo pipefail
+
+          files=("CLAUDE.md" "AGENTS.md" ".github/copilot-instructions.md")
+          errors=0
+
+          # Extract major section headers (## level) from each file
+          for f in "${files[@]}"; do
+            if [ ! -f "$f" ]; then
+              echo "ERROR: $f not found."
+              errors=$((errors + 1))
+              continue
+            fi
+            echo "--- $f ---"
+            grep '^## ' "$f" | sed 's/^## //' | sort > "/tmp/sections_$(echo "$f" | tr '/./' '_')"
+            grep '^## ' "$f" | sed 's/^## //'
+            echo ""
+          done
+
+          if [ "$errors" -gt 0 ]; then
+            echo "FAILED: Missing instruction files."
+            exit 1
+          fi
+
+          # Compare section headers across all files
+          base_file="${files[0]}"
+          base_sections="/tmp/sections_$(echo "$base_file" | tr '/./' '_')"
+
+          for f in "${files[@]:1}"; do
+            other_sections="/tmp/sections_$(echo "$f" | tr '/./' '_')"
+            if ! diff -u "$base_sections" "$other_sections" > /tmp/section_diff 2>&1; then
+              echo "WARNING: Section headers differ between $base_file and $f:"
+              cat /tmp/section_diff
+              errors=$((errors + 1))
+            else
+              echo "OK: $base_file and $f have matching section headers."
+            fi
+          done
+
+          if [ "$errors" -gt 0 ]; then
+            echo ""
+            echo "FAILED: Instruction files are out of sync."
+            exit 1
+          fi
+          echo ""
+          echo "All instruction files are synchronized."

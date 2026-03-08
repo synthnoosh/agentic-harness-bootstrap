@@ -1,0 +1,39 @@
+---
+variables:
+  phpstan_level: "Analysis level (0-9, recommend 6+ for new projects)"
+  src_paths: "Paths to analyze"
+---
+
+# phpstan.neon — Strict PHPStan configuration for Laravel/PHP projects
+#
+# Run: ./vendor/bin/phpstan analyse
+# Install: composer require --dev phpstan/phpstan larastan/larastan
+
+includes:
+    # Laravel-specific extension (provides type inference for facades, models, etc.)
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    level: {{phpstan_level}}
+
+    paths:
+        {{#src_paths}}
+        - {{.}}
+        {{/src_paths}}
+
+    # ── Strict rules ────────────────────────────────────────────
+    checkMissingIterableValueType: true
+    checkGenericClassInNonGenericObjectType: true
+    reportUnmatchedIgnoredErrors: true
+
+    # ── Excluded paths ──────────────────────────────────────────
+    excludePaths:
+        - vendor/
+        - storage/
+        - bootstrap/cache/
+
+    # ── Baseline ────────────────────────────────────────────────
+    # To generate a baseline for existing code:
+    #   ./vendor/bin/phpstan analyse --generate-baseline
+    # Then uncomment the line below:
+    # - phpstan-baseline.neon

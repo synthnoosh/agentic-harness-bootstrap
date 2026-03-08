@@ -1,0 +1,27 @@
+---
+variables:
+  lint_cmd: "PHP lint command (e.g., ./vendor/bin/pint --test)"
+  phpstan_level: "PHPStan analysis level (0-9)"
+---
+
+# grumphp.yml — GrumPHP configuration for PHP projects
+#
+# Install: composer require --dev phpro/grumphp
+# GrumPHP automatically registers a git pre-commit hook on install.
+
+grumphp:
+  tasks:
+    # ── PHP syntax check ──────────────────────────────────────
+    phplint:
+      triggered_by: ['php']
+
+    # ── Code style (Laravel Pint) ─────────────────────────────
+    exec:
+      triggered_by: ['php']
+      command: "{{lint_cmd}}"
+
+    # ── Static analysis (PHPStan) ─────────────────────────────
+    phpstan:
+      level: {{phpstan_level}}
+      configuration: phpstan.neon
+      triggered_by: ['php']

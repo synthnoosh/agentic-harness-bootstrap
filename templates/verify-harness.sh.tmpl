@@ -1,0 +1,172 @@
+---
+variables:
+  agent_files: "Array of agent instruction file paths"
+---
+
+#!/usr/bin/env bash
+# verify-harness.sh — Verify that the development harness is consistent and complete.
+#
+# This script persists Phase 3's checks into the target repo so they run on every CI
+# build and can be invoked locally via `make verify`. It enforces Principle 1:
+# "Every instruction the agent reads must be backed by a working command."
+#
+# Usage: ./scripts/verify-harness.sh
+set -euo pipefail
+
+PASS=0
+FAIL=0
+WARN=0
+
+# ── Helpers ──────────────────────────────────────────────────────────────────
+
+pass() { ((PASS++)); echo "  ✓ $1"; }
+fail() { ((FAIL++)); echo "  ✗ $1" >&2; }
+warn() { ((WARN++)); echo "  ⚠ $1"; }
+
+section() { echo ""; echo "── $1 ──"; }
+
+# ── 1. Module path existence ────────────────────────────────────────────────
+# Parse the module table from ARCHITECTURE.md and verify each path exists.
+
+section "Module path existence"
+
+if [[ -f ARCHITECTURE.md ]]; then
+  in_table=false
+  while IFS= read -r line; do
+    # Detect markdown table rows (skip header and separator)
+    if [[ "$line" =~ ^\|.*\|$ ]]; then
+      # Skip separator rows (contain only |, -, and spaces)
+      if [[ "$line" =~ ^[[:space:]]*\|[-[:space:]|]+\|$ ]]; then
+        in_table=true
+        continue
+      fi
+      if $in_table; then
+        # Extract the first column (module path), trim whitespace
+        path=$(echo "$line" | cut -d'|' -f2 | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+        # Skip if it looks like a header
+        if [[ "$path" == "Path" || "$path" == "Module" || "$path" == "Directory" || -z "$path" ]]; then
+          continue
+        fi
+        # Strip backticks and trailing slashes
+        path=$(echo "$path" | tr -d '`' | sed 's|/$||')
+        if [[ -e "$path" ]]; then
+          pass "Path exists: $path"
+        else
+          fail "Path missing: $path"
+        fi
+      fi
+    else
+      in_table=false
+    fi
+  done < ARCHITECTURE.md
+else
+  warn "ARCHITECTURE.md not found — skipping module path check"
+fi
+
+# ── 2. Command consistency ──────────────────────────────────────────────────
+# Verify that agent instruction files reference the same build/test/lint commands.
+
+section "Command consistency"
+
+agent_files=({{#agent_files}}"{{.}}" {{/agent_files}})
+
+extract_commands() {
+  local file="$1"
+  # Look for common command patterns: lines starting with backtick-fenced commands
+  # or lines that match known patterns like make, npm, go, cargo, etc.
+  grep -E '^\s*(make |npm |npx |yarn |pnpm |go |cargo |python |pip |composer |php )' "$file" 2>/dev/null \
+    | sed 's/^[[:space:]]*//' | sort -u || true
+}
+
+if [[ ${#agent_files[@]} -gt 1 ]]; then
+  ref_file="${agent_files[0]}"
+  if [[ -f "$ref_file" ]]; then
+    ref_cmds=$(extract_commands "$ref_file")
+    for af in "${agent_files[@]:1}"; do
+      if [[ -f "$af" ]]; then
+        other_cmds=$(extract_commands "$af")
+        if [[ "$ref_cmds" == "$other_cmds" ]]; then
+          pass "Commands consistent: $ref_file ↔ $af"
+        else
+          fail "Command mismatch between $ref_file and $af"
+        fi
+      else
+        warn "Agent file not found: $af"
+      fi
+    done
+  else
+    warn "Reference agent file not found: $ref_file"
+  fi
+else
+  warn "Fewer than 2 agent files configured — skipping consistency check"
+fi
+
+# ── 3. Required sections ────────────────────────────────────────────────────
+# Verify that agent instruction files contain the required sections.
+
+section "Required sections"
+
+required_sections=("Commands" "Architecture" "Always" "Never" "Harness")
+
+for af in "${agent_files[@]}"; do
+  if [[ -f "$af" ]]; then
+    for req in "${required_sections[@]}"; do
+      if grep -qi "$req" "$af"; then
+        pass "$af contains section: $req"
+      else
+        fail "$af missing section: $req"
+      fi
+    done
+  fi
+done
+
+# ── 4. ADR structure ────────────────────────────────────────────────────────
+# If docs/adr/ exists, verify files follow NNN-title.md naming.
+
+section "ADR structure"
+
+if [[ -d docs/adr ]]; then
+  for adr_file in docs/adr/*.md; do
+    [[ -e "$adr_file" ]] || continue
+    basename=$(basename "$adr_file")
+    if [[ "$basename" =~ ^[0-9]{3,}-[a-z0-9]([a-z0-9-]*[a-z0-9])?\.md$ ]]; then
+      pass "ADR naming OK: $basename"
+    else
+      fail "ADR naming invalid: $basename (expected NNN-title.md)"
+    fi
+  done
+else
+  warn "docs/adr/ not found — skipping ADR check"
+fi
+
+# ── 5. EVOLVE marker report ─────────────────────────────────────────────────
+# Surface all <!-- EVOLVE: ... --> markers for review.
+
+section "EVOLVE markers"
+
+evolve_count=0
+while IFS= read -r match; do
+  ((evolve_count++))
+  warn "EVOLVE marker: $match"
+done < <(grep -rn '<!-- EVOLVE:' --include='*.md' . 2>/dev/null || true)
+
+if [[ $evolve_count -eq 0 ]]; then
+  pass "No EVOLVE markers found"
+fi
+
+# ── 6. Summary ──────────────────────────────────────────────────────────────
+
+echo ""
+echo "════════════════════════════════════════"
+echo "  Passed:   $PASS"
+echo "  Failed:   $FAIL"
+echo "  Warnings: $WARN"
+echo "════════════════════════════════════════"
+
+if [[ $FAIL -gt 0 ]]; then
+  echo "Verification FAILED."
+  exit 1
+else
+  echo "Verification PASSED."
+  exit 0
+fi

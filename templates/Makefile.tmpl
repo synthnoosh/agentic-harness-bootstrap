@@ -1,0 +1,38 @@
+---
+variables:
+  build_cmd: "Build command"
+  test_cmd: "Test command"
+  lint_cmd: "Lint command"
+  format_cmd: "Format command"
+---
+
+# Makefile — Standard project targets
+#
+# Targets:
+#   build   Build the project
+#   test    Run the test suite
+#   lint    Run linters
+#   fmt     Auto-format code
+#   check   Run the full local verification cycle (fast checks first)
+#   verify  Run harness integrity checks
+
+.PHONY: build test lint fmt check verify
+
+build:
+	{{build_cmd}}
+
+test:
+	{{test_cmd}}
+
+lint:
+	{{lint_cmd}}
+
+fmt:
+	{{format_cmd}}
+
+## Run the full local verification cycle (fast checks first)
+check: fmt lint build test
+
+## Verify harness integrity
+verify:
+	./scripts/verify-harness.sh

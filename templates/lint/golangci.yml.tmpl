@@ -1,0 +1,57 @@
+---
+variables:
+  go_version: "Go version"
+---
+
+# .golangci.yml — Strict golangci-lint configuration for Go projects
+#
+# Run: golangci-lint run ./...
+
+run:
+  timeout: 5m
+  tests: true
+  go: "{{go_version}}"
+
+linters:
+  enable:
+    - govet        # reports suspicious constructs
+    - errcheck     # checks unchecked errors
+    - staticcheck  # comprehensive static analysis
+    - unused       # finds unused code
+    - gosimple     # suggests code simplifications
+    - ineffassign  # detects ineffectual assignments
+    - revive       # extensible linter, replaces golint
+    - gocritic     # opinionated linter with many checks
+    - misspell     # finds commonly misspelled English words
+    - gofmt        # checks formatting
+
+linters-settings:
+  errcheck:
+    # Report when error return values are assigned to blank identifier.
+    check-blank: true
+
+  revive:
+    rules:
+      # Exported functions should have comments.
+      - name: exported
+        severity: warning
+        arguments:
+          - "checkPrivateReceivers"
+
+      # Functions should not return unexported types.
+      - name: unexported-return
+        severity: warning
+
+  gocritic:
+    enabled-tags:
+      - diagnostic
+      - style
+      - performance
+
+  misspell:
+    locale: US
+
+issues:
+  # Show all issues from a linter, not just the first N.
+  max-issues-per-linter: 0
+  max-same-issues: 0

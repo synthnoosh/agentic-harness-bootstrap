@@ -1,0 +1,96 @@
+---
+variables:
+  primary_language: "Primary programming language"
+  lint_cmd: "Command to run the linter"
+  test_cmd: "Command to run tests"
+  build_cmd: "Command to build the project"
+  node_version: "(Optional) Node.js version for JS/TS projects"
+  go_version: "(Optional) Go version for Go projects"
+  python_version: "(Optional) Python version for Python projects"
+---
+
+stages:
+  - lint
+  - build
+  - test
+  - verify
+
+{{#node_version}}
+default:
+  image: node:{{node_version}}
+  before_script:
+    - npm ci
+{{/node_version}}
+{{^node_version}}
+{{#go_version}}
+default:
+  image: golang:{{go_version}}
+{{/go_version}}
+{{^go_version}}
+{{#python_version}}
+default:
+  image: python:{{python_version}}
+  before_script:
+    - pip install -r requirements.txt
+{{/python_version}}
+{{/go_version}}
+{{/node_version}}
+
+lint:
+  stage: lint
+  script:
+    - {{lint_cmd}}
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+
+build:
+  stage: build
+  needs: [lint]
+  script:
+    - {{build_cmd}}
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+
+test:
+  stage: test
+  needs: [build]
+  script:
+    - {{test_cmd}}
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+
+verify-harness:
+  stage: verify
+  needs: [test]
+  script:
+    - |
+      if [ -f scripts/verify-harness.sh ]; then
+        bash scripts/verify-harness.sh
+      else
+        echo "verify-harness.sh not found — skipping."
+      fi
+    - |
+      echo "Checking that modules listed in ARCHITECTURE.md match actual directories..."
+      if [ ! -f ARCHITECTURE.md ]; then
+        echo "ARCHITECTURE.md not found — skipping module verification."
+        exit 0
+      fi
+      errors=0
+      paths=$(awk '/^\| Module/,/^$/' ARCHITECTURE.md \
+        | grep '^|' \
+        | tail -n +3 \
+        | awk -F'|' '{gsub(/^ *`|` *$/, "", $3); print $3}' \
+        | sed 's/^ *//;s/ *$//')
+      for mod_path in $paths; do
+        if [ -n "$mod_path" ] && [ ! -d "$mod_path" ] && [ ! -f "$mod_path" ]; then
+          echo "ERROR: Module path '$mod_path' listed in ARCHITECTURE.md does not exist."
+          errors=$((errors + 1))
+        fi
+      done
+      if [ "$errors" -gt 0 ]; then
+        echo "$errors module path(s) in ARCHITECTURE.md do not match actual directories."
+        exit 1
+      fi
+      echo "All module paths verified."
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
