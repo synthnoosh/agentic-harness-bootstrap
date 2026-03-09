@@ -1,12 +1,12 @@
 <div align="center">
 
-<img src="assets/banner.svg" alt="Agent Bootstrap" width="960"/>
+<img src="assets/banner.svg" alt="Agentic Harness Bootstrap" width="960"/>
 
-# Agent Bootstrap
+# Agentic Harness Bootstrap
 
 **Give agents the map, not the manual.**
 
-Generate tailored `CLAUDE.md` + `AGENTS.md` + `copilot-instructions.md` — plus architecture maps, CI pipelines, lint configs, and pre-commit hooks — from a single repo scan.
+Generate tailored agent instruction files, architecture maps, CI pipelines, lint configs, and pre-commit hooks — from a single repo scan.
 
 Works with **Claude Code** · **OpenAI Codex** · **GitHub Copilot**
 
