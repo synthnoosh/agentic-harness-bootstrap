@@ -1,0 +1,198 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" width="960" height="540">
+  <defs>
+    <!-- Background gradient -->
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0d1117"/>
+      <stop offset="50%" stop-color="#111827"/>
+      <stop offset="100%" stop-color="#0d1117"/>
+    </linearGradient>
+
+    <!-- Accent gradients -->
+    <linearGradient id="accentCyan" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#06b6d4"/>
+      <stop offset="100%" stop-color="#22d3ee"/>
+    </linearGradient>
+    <linearGradient id="accentPurple" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#8b5cf6"/>
+      <stop offset="100%" stop-color="#a78bfa"/>
+    </linearGradient>
+    <linearGradient id="accentGreen" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#34d399"/>
+    </linearGradient>
+    <linearGradient id="accentAmber" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#fbbf24"/>
+    </linearGradient>
+    <linearGradient id="titleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#e2e8f0"/>
+      <stop offset="100%" stop-color="#f8fafc"/>
+    </linearGradient>
+    <linearGradient id="flowLine" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#06b6d4" stop-opacity="0.1"/>
+      <stop offset="50%" stop-color="#06b6d4" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#06b6d4" stop-opacity="0.1"/>
+    </linearGradient>
+
+    <!-- Glow filters -->
+    <filter id="glowCyan" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feFlood flood-color="#06b6d4" flood-opacity="0.3"/>
+      <feComposite in2="blur" operator="in"/>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glowPurple" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feFlood flood-color="#8b5cf6" flood-opacity="0.3"/>
+      <feComposite in2="blur" operator="in"/>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glowGreen" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feFlood flood-color="#10b981" flood-opacity="0.3"/>
+      <feComposite in2="blur" operator="in"/>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glowAmber" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feFlood flood-color="#f59e0b" flood-opacity="0.3"/>
+      <feComposite in2="blur" operator="in"/>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="softShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feFlood flood-color="#000" flood-opacity="0.4"/>
+      <feComposite in2="blur" operator="in"/>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <!-- Dot pattern -->
+    <pattern id="dots" x="0" y="0" width="30" height="30" patternUnits="userSpaceOnUse">
+      <circle cx="15" cy="15" r="0.8" fill="#374151" opacity="0.5"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="540" fill="url(#bg)"/>
+  <rect width="960" height="540" fill="url(#dots)"/>
+
+  <!-- Subtle border glow top -->
+  <rect x="0" y="0" width="960" height="2" fill="url(#accentCyan)" opacity="0.4"/>
+
+  <!-- Title area -->
+  <text x="480" y="62" text-anchor="middle" font-family="'SF Mono', 'Fira Code', 'JetBrains Mono', monospace" font-size="14" fill="#06b6d4" letter-spacing="6" opacity="0.7">HARNESS ENGINEERING</text>
+
+  <text x="480" y="105" text-anchor="middle" font-family="-apple-system, 'Segoe UI', system-ui, sans-serif" font-size="44" font-weight="700" fill="url(#titleGrad)">Agent Bootstrap</text>
+
+  <text x="480" y="138" text-anchor="middle" font-family="-apple-system, 'Segoe UI', system-ui, sans-serif" font-size="16" fill="#94a3b8">Give agents the map, not the manual</text>
+
+  <!-- Flow diagram -->
+  <!-- Input box: Your Repo -->
+  <g transform="translate(112, 180)">
+    <rect x="0" y="0" width="148" height="64" rx="8" fill="none" stroke="#374151" stroke-width="1.5" stroke-dasharray="6 3"/>
+    <text x="74" y="28" text-anchor="middle" font-family="'SF Mono', 'Fira Code', monospace" font-size="13" fill="#94a3b8">Your Repo</text>
+    <text x="74" y="48" text-anchor="middle" font-family="'SF Mono', 'Fira Code', monospace" font-size="11" fill="#4b5563">(any stack)</text>
+  </g>
+
+  <!-- Arrow from input to pipeline -->
+  <line x1="186" y1="244" x2="186" y2="272" stroke="#4b5563" stroke-width="1.5"/>
+  <polygon points="186,278 181,270 191,270" fill="#4b5563"/>
+
+  <!-- Pipeline container -->
+  <rect x="46" y="280" width="280" height="200" rx="12" fill="#111827" fill-opacity="0.6" stroke="#1e293b" stroke-width="1.5"/>
+  <text x="186" y="308" text-anchor="middle" font-family="'SF Mono', 'Fira Code', monospace" font-size="12" fill="#64748b" letter-spacing="3">PIPELINE</text>
+
+  <!-- Phase boxes -->
+  <!-- Discover -->
+  <g filter="url(#glowCyan)">
+    <rect x="76" y="324" width="105" height="40" rx="6" fill="#0d1117" stroke="url(#accentCyan)" stroke-width="1.5"/>
+    <text x="128" y="349" text-anchor="middle" font-family="'SF Mono', 'Fira Code', monospace" font-size="12" font-weight="600" fill="#22d3ee">Discover</text>
+  </g>
+
+  <!-- Arrow Discover -> Analyze -->
+  <line x1="181" y1="344" x2="196" y2="344" stroke="#4b5563" stroke-width="1"/>
+  <polygon points="200,344 194,340 194,348" fill="#4b5563"/>
+
+  <!-- Analyze -->
+  <g filter="url(#glowPurple)">
+    <rect x="202" y="324" width="105" height="40" rx="6" fill="#0d1117" stroke="url(#accentPurple)" stroke-width="1.5"/>
+    <text x="254" y="349" text-anchor="middle" font-family="'SF Mono', 'Fira Code', monospace" font-size="12" font-weight="600" fill="#a78bfa">Analyze</text>
+  </g>
+
+  <!-- Arrow Analyze -> Generate -->
+  <line x1="254" y1="364" x2="254" y2="378" stroke="#4b5563" stroke-width="1"/>
+  <polygon points="254,384 249,376 259,376" fill="#4b5563"/>
+
+  <!-- Generate -->
+  <g filter="url(#glowAmber)">
+    <rect x="202" y="386" width="105" height="40" rx="6" fill="#0d1117" stroke="url(#accentAmber)" stroke-width="1.5"/>
+    <text x="254" y="411" text-anchor="middle" font-family="'SF Mono', 'Fira Code', monospace" font-size="12" font-weight="600" fill="#fbbf24">Generate</text>
+  </g>
+
+  <!-- Arrow Generate -> Verify -->
+  <line x1="202" y1="406" x2="187" y2="406" stroke="#4b5563" stroke-width="1"/>
+  <polygon points="181,406 187,402 187,410" fill="#4b5563"/>
+
+  <!-- Verify -->
+  <g filter="url(#glowGreen)">
+    <rect x="76" y="386" width="105" height="40" rx="6" fill="#0d1117" stroke="url(#accentGreen)" stroke-width="1.5"/>
+    <text x="128" y="411" text-anchor="middle" font-family="'SF Mono', 'Fira Code', monospace" font-size="12" font-weight="600" fill="#34d399">Verify</text>
+  </g>
+
+  <!-- Arrow from pipeline to output -->
+  <line x1="186" y1="480" x2="186" y2="506" stroke="#4b5563" stroke-width="1.5"/>
+  <polygon points="186,512 181,504 191,504" fill="#4b5563"/>
+
+  <!-- Artifacts panel (right side) -->
+  <rect x="420" y="180" width="496" height="340" rx="12" fill="#0d1117" stroke="#1e293b" stroke-width="1.5"/>
+
+  <!-- Terminal dots -->
+  <circle cx="442" cy="198" r="5" fill="#ef4444" opacity="0.8"/>
+  <circle cx="458" cy="198" r="5" fill="#f59e0b" opacity="0.8"/>
+  <circle cx="474" cy="198" r="5" fill="#10b981" opacity="0.8"/>
+  <text x="540" y="202" font-family="'SF Mono', 'Fira Code', monospace" font-size="12" fill="#64748b">generated artifacts</text>
+
+  <!-- Artifact list -->
+  <g font-family="'SF Mono', 'Fira Code', monospace" font-size="13">
+    <!-- Agent instructions -->
+    <text x="450" y="240" fill="#22d3ee">agent instructions</text>
+    <text x="610" y="240" fill="#4b5563">Boundaries + conventions per tool</text>
+
+    <!-- ARCHITECTURE.md -->
+    <text x="450" y="272" fill="#a78bfa">ARCHITECTURE.md</text>
+    <text x="610" y="272" fill="#4b5563">Module map + layers</text>
+
+    <!-- Task runner -->
+    <text x="450" y="304" fill="#a78bfa">task runner</text>
+    <text x="610" y="304" fill="#4b5563">check / verify commands</text>
+
+    <!-- Divider -->
+    <line x1="450" y1="324" x2="888" y2="324" stroke="#1e293b" stroke-width="1"/>
+
+    <!-- CI pipeline -->
+    <text x="450" y="352" fill="#fbbf24">CI pipeline</text>
+    <text x="610" y="352" fill="#4b5563">Staged agent-lint workflow</text>
+
+    <!-- Lint config -->
+    <text x="450" y="384" fill="#fbbf24">lint config</text>
+    <text x="610" y="384" fill="#4b5563">ESLint / Ruff / golangci</text>
+
+    <!-- Pre-commit hooks -->
+    <text x="450" y="416" fill="#34d399">pre-commit hooks</text>
+    <text x="610" y="416" fill="#4b5563">Stack-specific git hooks</text>
+
+    <!-- ADRs -->
+    <text x="450" y="448" fill="#34d399">ADRs</text>
+    <text x="610" y="448" fill="#4b5563">Decision record template</text>
+
+    <!-- verify-harness.sh -->
+    <text x="450" y="480" fill="#34d399">verify-harness.sh</text>
+    <text x="610" y="480" fill="#4b5563">Integrity checks</text>
+  </g>
+
+  <!-- Connector: pipeline -> artifacts panel -->
+  <line x1="326" y1="380" x2="420" y2="380" stroke="#1e293b" stroke-width="1.5" stroke-dasharray="6 3"/>
+
+  <!-- Bottom accent line -->
+  <rect x="0" y="538" width="960" height="2" fill="url(#accentCyan)" opacity="0.3"/>
+</svg>

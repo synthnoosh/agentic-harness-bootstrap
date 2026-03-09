@@ -7,6 +7,8 @@ variables:
   test_cmd: "Command to run tests"
   lint_cmd: "Command to run the linter"
   format_cmd: "Command to run the formatter"
+  check_cmd: "Composite command that runs format, lint, build, test in order (e.g., make check, npm run check)"
+  verify_cmd: "Command to run harness integrity checks (e.g., make verify, npm run verify)"
   architecture_summary: "Brief summary of the architecture"
   conventions: "Array of coding convention strings"
   modules: "Array of {name, path, description} objects"
@@ -27,8 +29,8 @@ variables:
 - **Test:** `{{test_cmd}}`
 - **Lint:** `{{lint_cmd}}`
 - **Format:** `{{format_cmd}}`
-- **Check (all):** `make check`
-- **Verify harness:** `make verify`
+- **Check (all):** `{{check_cmd}}`
+- **Verify harness:** `{{verify_cmd}}`
 
 ## Architecture
 
@@ -52,7 +54,7 @@ Key modules:
 {{#always_rules}}
 - {{.}}
 {{/always_rules}}
-- Run `make check` before considering a task complete
+- Run `{{check_cmd}}` before considering a task complete
 - Do not skip pre-commit hooks
 
 ## Patterns to Avoid

@@ -1,8 +1,10 @@
 <div align="center">
 
+<img src="assets/banner.svg" alt="Agent Bootstrap" width="960"/>
+
 # Agent Bootstrap
 
-**Make any repo AI-native in one command.**
+**Give agents the map, not the manual.**
 
 Generate tailored `CLAUDE.md` + `AGENTS.md` + `copilot-instructions.md` — plus architecture maps, CI pipelines, lint configs, and pre-commit hooks — from a single repo scan.
 
@@ -15,37 +17,6 @@ Works with **Claude Code** · **OpenAI Codex** · **GitHub Copilot**
 </div>
 
 ---
-
-```
-          ┌──────────────┐
-          │  Your Repo    │
-          │  (any stack)  │
-          └──────┬───────┘
-                 │
-                 ▼
-┌────────────────────────────────┐
-│        Agent Bootstrap         │
-│                                │
-│  ┌──────────┐  ┌───────────┐  │
-│  │ Discover │─▶│  Analyze  │  │
-│  └──────────┘  └─────┬─────┘  │
-│                      │        │
-│  ┌──────────┐  ┌─────▼─────┐  │
-│  │  Verify  │◀─│ Generate  │  │
-│  └──────────┘  └───────────┘  │
-└────────────────┬───────────────┘
-                 │
-                 ▼
-┌────────────────────────────────┐
-│     Your Repo — AI-Native      │
-│                                │
-│  CLAUDE.md    ARCHITECTURE.md  │
-│  AGENTS.md    Makefile         │
-│  copilot-instructions.md      │
-│  CI pipeline  lint config     │
-│  pre-commit hooks  ADRs       │
-└────────────────────────────────┘
-```
 
 ## Quick Start
 
@@ -65,7 +36,7 @@ Each tool automatically reads its instruction file from this repo — no flags o
 | `AGENTS.md` | OpenAI Codex instructions — same content, Codex format |
 | `.github/copilot-instructions.md` | GitHub Copilot instructions |
 | `ARCHITECTURE.md` | Module map, layer diagram, dependency rules |
-| `Makefile` | Standard targets: `check` (fast feedback loop), `verify` |
+| Task runner (`check` / `verify`) | Composite commands for fast feedback loop and harness verification — uses your existing task runner (npm scripts, Cargo, Make, etc.) |
 | Pre-commit hooks | Stack-specific git hooks (husky, pre-commit framework, GrumPHP) |
 | Lint configuration | Strict linter config for your stack (ESLint, Ruff, golangci-lint, PHPStan) |
 | `scripts/verify-harness.sh` | Persistent harness integrity checks |
@@ -137,7 +108,7 @@ agentic-harness-bootstrap/
 │   ├── AGENTS.md.tmpl           # Target repo Codex instructions
 │   ├── copilot-instructions.md.tmpl
 │   ├── ARCHITECTURE.md.tmpl     # Architecture map template
-│   ├── Makefile.tmpl            # Makefile with check/verify targets
+│   ├── Makefile.tmpl            # Makefile template (used when no task runner exists)
 │   ├── verify-harness.sh.tmpl   # Harness verification script
 │   ├── adr-template.md.tmpl     # ADR template
 │   ├── pre-commit/              # Pre-commit hook templates per stack

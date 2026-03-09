@@ -133,9 +133,9 @@ Generate `scripts/verify-harness.sh` from `templates/verify-harness.sh.tmpl`. Th
 
 ---
 
-## Step 3d: Makefile / Task Runner with `check` Target
+## Step 3d: Task Runner with `check` Target
 
-Generate `Makefile` from `templates/Makefile.tmpl` with a `check` target that runs the full pipeline in sequence: format → lint → build → test. If the project already uses a task runner (npm scripts, Cargo), add equivalent composite commands instead of a Makefile:
+Every harness must have a composite `check` command that runs the full pipeline in sequence: format → lint → build → test. Use the target repo's existing task runner. Only generate a `Makefile` from `templates/Makefile.tmpl` if the project has no task runner at all:
 
 - **npm**: Add a `check` script to `package.json` that chains `fmt`, `lint`, `build`, and `test`.
 - **Cargo**: Document a `cargo check-all` alias or Makefile target.
