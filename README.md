@@ -6,6 +6,9 @@
 
 **Give agents the map, not the manual.**
 
+Turn any repository into an **AI-agent-ready codebase**.
+Generates harness infrastructure that allows AI coding agents (Claude Code, Codex, Copilot, etc.) to understand architecture, enforce boundaries, and verify their own work.
+
 Generate tailored agent instruction files, architecture maps, CI pipelines, lint configs, and pre-commit hooks — from a single repo scan.
 
 Works with **Claude Code** · **OpenAI Codex** · **GitHub Copilot**
