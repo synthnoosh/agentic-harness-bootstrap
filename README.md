@@ -6,12 +6,30 @@
 
 **Give agents the map, not the manual.**
 
-Turn any repository into an **AI-agent-ready codebase**.
-Generates harness infrastructure that allows AI coding agents (Claude Code, Codex, Copilot, etc.) to understand architecture, enforce boundaries, and verify their own work.
+Turn any repository into a codebase AI coding agents can safely understand, modify, and verify.
 
-Generate tailored agent instruction files, architecture maps, CI pipelines, lint configs, and pre-commit hooks — from a single repo scan.
+With a single prompt, generate tailored instructions, architecture maps, lint rules, pre-commit hooks, and CI scaffolding.
 
-Works with **Claude Code** · **OpenAI Codex** · **GitHub Copilot**
+Compatible with Claude Code, Codex, OpenCode and GitHub Copilot workflows.
+
+## Generates
+
+| Artifact | Purpose |
+|-|-|
+| `CLAUDE.md` | Claude Code instructions — commands, conventions, boundaries |
+| `AGENTS.md` | OpenAI Codex instructions — same content, Codex format |
+| `.github/copilot-instructions.md` | GitHub Copilot instructions |
+| `ARCHITECTURE.md` | Module map, layer diagram, dependency rules |
+| Task runner (`check` / `verify`) | Composite commands for fast feedback loop and harness verification — uses your existing task runner (npm scripts, Cargo, Make, etc.) |
+| Pre-commit hooks | Stack-specific git hooks (husky, pre-commit framework, GrumPHP) |
+| Lint configuration | Strict linter config for your stack (ESLint, Ruff, golangci-lint, PHPStan) |
+| `scripts/verify-harness.sh` | Persistent harness integrity checks |
+| `docs/adr/` | ADR directory with template and first record |
+| CI integration | Staged agent-lint pipeline for GitHub Actions or GitLab CI |
+
+For **greenfield repos** (empty or new projects), it also scaffolds recommended directory structure, `.editorconfig`, and starter task runner.
+
+
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![CI](https://img.shields.io/badge/CI-passing-brightgreen.svg)](.github/workflows/ci.yml)
@@ -31,22 +49,6 @@ Bootstrap /path/to/my-project
 
 Each tool automatically reads its instruction file from this repo — no flags or configuration needed. The agent runs four phases (discover → analyze → generate → verify) and writes tailored artifacts into your target project.
 
-## What Gets Generated
-
-| Artifact | Purpose |
-|-|-|
-| `CLAUDE.md` | Claude Code instructions — commands, conventions, boundaries |
-| `AGENTS.md` | OpenAI Codex instructions — same content, Codex format |
-| `.github/copilot-instructions.md` | GitHub Copilot instructions |
-| `ARCHITECTURE.md` | Module map, layer diagram, dependency rules |
-| Task runner (`check` / `verify`) | Composite commands for fast feedback loop and harness verification — uses your existing task runner (npm scripts, Cargo, Make, etc.) |
-| Pre-commit hooks | Stack-specific git hooks (husky, pre-commit framework, GrumPHP) |
-| Lint configuration | Strict linter config for your stack (ESLint, Ruff, golangci-lint, PHPStan) |
-| `scripts/verify-harness.sh` | Persistent harness integrity checks |
-| `docs/adr/` | ADR directory with template and first record |
-| CI integration | Staged agent-lint pipeline for GitHub Actions or GitLab CI |
-
-For **greenfield repos** (empty or new projects), it also scaffolds recommended directory structure, `.editorconfig`, and starter task runner.
 
 ## How It Works
 
