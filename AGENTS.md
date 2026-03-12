@@ -92,7 +92,9 @@ Before writing any file in the target repo:
 
 ## Reference
 
-Consult `reference/harness-principles.md` for background on the ten harness engineering principles that guide artifact generation.
+Consult `reference/harness-principles.md` for background on the twelve harness engineering principles, operating doctrine, and "every failure is a harness gap" meta-principle.
+
+Consult `reference/domain-harness-guide.md` for domain-aware harness generation (hostile external boundaries, API platforms, financial systems).
 
 Consult `reference/lint-remediation-guide.md` for guidance on configuring linters and resolving common lint issues in generated files.
 

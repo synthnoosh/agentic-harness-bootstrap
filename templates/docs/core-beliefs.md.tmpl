@@ -7,36 +7,85 @@ variables:
 
 Operating principles for agents working in this repository. These are not aspirational — they reflect how this project actually operates.
 
-## 1. Repository Is the Source of Truth
+Do not build the software directly; build the harness that makes correct software the easiest thing for agents to produce.
+
+## Operating Doctrine
+
+1. **Humans write constraints; agents write implementations.**
+2. **The repo is the only source of truth agents can rely on.**
+3. **Every external boundary is validated and normalized.**
+4. **Every important behavior is testable and observable.**
+5. **Architecture is enforced mechanically, not socially.**
+6. **Every repeated review comment becomes a rule, test, or doc.**
+7. **Every bug becomes a fixture, replay, or harness check.**
+8. **Every form of drift is paid down continuously.**
+
+## Every Failure Is a Harness Gap
+
+When an agent makes a mistake, assume one of these was missing:
+
+- Architecture boundary
+- Validation rule
+- Documentation
+- Observability signal
+- Test harness or fixture
+- Review automation
+- Quality gate
+
+A failure is a signal to improve the system, not just fix the instance.
+
+The engineering loop: **specify intent → let agents act → observe failures → convert failures into better harnesses → repeat.**
+
+## Beliefs
+
+### 1. Repository Is the Source of Truth
 
 Everything an agent needs to know lives here. If it's not in the repo, it doesn't exist for agents. Product context, design rationale, architectural decisions, and engineering conventions are all co-located with the code.
 
-When a decision is made in a meeting or chat, encode it here — as a design doc, an ADR, or an update to an existing document. Knowledge that lives only in people's heads is invisible to the system.
+When a decision is made in a meeting or chat, encode it here — as a design doc, an ADR, or an update to an existing document. Slack, Notion, and tribal knowledge do not count unless they are turned into versioned artifacts.
 
-## 2. Enforce, Don't Instruct
+### 2. Enforce, Don't Instruct
 
 Prefer mechanical enforcement (linters, tests, structural checks) over prose instructions. When an agent repeatedly violates a documented rule, promote the rule into a linter or test.
 
 Progression: **document → observe violations → encode as tooling → delete the prose**.
 
-## 3. Architecture Is Navigational
+### 3. Architecture Is Navigational
 
 Architecture docs tell agents where things are and what the rules are. They do not explain history, justify decisions, or describe aspirations. ADRs exist for rationale. Architecture docs exist for navigation.
 
-## 4. Boundaries Are Binary
+### 4. Boundaries Are Binary and Tiered by Risk
 
 Every action is Always (do it), Ask (confirm first), or Never (forbidden). There are no "it depends" actions. If a boundary requires judgment, it should be in the Ask tier until enough context exists to promote it.
 
-## 5. Fast Feedback Over Thorough Feedback
+Match strictness to blast radius:
+
+- **Low risk** (docs, tooling, UI cosmetics): faster path
+- **Medium risk** (business logic, API routes): standard checks + review
+- **High risk** (auth, payments, data migration, fund movement): strongest validation, replay, and explicit human review
+
+### 5. Fast Feedback Over Thorough Feedback
 
 A fast signal that catches 80% of problems is more valuable than a slow signal that catches 100%. Structure the toolchain so agents get feedback in seconds on the most common failure modes.
 
-## 6. Minimal Over Complete
+### 6. Minimal Over Complete
 
 Generate the minimum viable artifact. Don't create directories for modules that don't exist yet. Don't add configuration for features that aren't built. Let structure emerge from actual needs.
 
-## 7. Entropy Is the Default
+### 7. Entropy Is the Default
 
 Without active management, agent-generated code drifts toward inconsistency. Quality grades, recurring cleanup, and golden principles are not optional — they are infrastructure.
+
+### 8. Behavior Must Be Legible
+
+Agents need to see more than source files. They need direct access to tests, logs, metrics, traces, runtime errors, and reproducible local environments. The more of the system the agent can inspect and verify, the more autonomous it can become.
+
+### 9. External Boundaries Are Hostile
+
+All external data is untrusted at the boundary. Parse, validate, and normalize immediately. Internal code trusts typed interfaces. Connectors are adapters that translate between external weirdness and the canonical domain — nothing more.
+
+### 10. Prefer Inspectable, Boring, Predictable Systems
+
+Agents do better with stable, composable, easy-to-model abstractions. Opaque libraries and magical frameworks reduce agent leverage. A smaller in-repo abstraction with full test coverage is often better than a clever dependency the agent cannot reason about.
 
 <!-- EVOLVE: Add project-specific beliefs as team norms emerge -->

@@ -310,6 +310,71 @@ Proposed | Accepted | Deprecated | Superseded
 
 ---
 
+## Step 6a: Domain-Aware Artifacts (Conditional)
+
+If the Phase 1 domain risk assessment detected hostile external boundaries, generate additional artifacts. See `reference/domain-harness-guide.md` for full guidance.
+
+### docs/SECURITY.md
+
+Generate when security-sensitive operations are detected (signing, auth, secrets, audit requirements):
+
+```markdown
+# Security
+
+## Sensitive Data Handling
+<!-- What gets logged, what doesn't. How secrets are stored and rotated. -->
+
+## Authentication and Signing
+<!-- Auth flow documentation. Signature conventions. -->
+
+## Audit Requirements
+<!-- What actions are audited. Trace and audit ID conventions. -->
+```
+
+### docs/RELIABILITY.md
+
+Generate when external service integration or resilience concerns are detected:
+
+```markdown
+# Reliability
+
+## Retry Strategies
+<!-- Backoff policies per external service. Max retry counts. -->
+
+## Idempotency
+<!-- Which operations must be idempotent. How idempotency keys are managed. -->
+
+## Circuit Breakers
+<!-- Conditions for opening/closing circuits. Fallback behavior. -->
+
+## Reconciliation
+<!-- How system state is verified against external sources. -->
+```
+
+### Tiered Boundaries Enhancement
+
+When domain risk is detected, enhance the three-tier boundaries with risk-specific rules:
+
+- **Always**: Validate all external data at the boundary. Log all external interactions with correlation IDs.
+- **Ask**: Modify connector logic, change retry/backoff policies, alter authentication flows.
+- **Never**: Modify signing/auth code without explicit review. Skip boundary validation. Log secrets or sensitive data.
+
+### Test Fixture Directory
+
+If significant external integrations exist, generate:
+
+```
+tests/
+├── fixtures/        # Recorded or synthetic external responses
+│   ├── success/     # Happy-path responses per provider
+│   ├── errors/      # Error responses (rate limits, auth failures, etc.)
+│   └── edge-cases/  # Partial operations, out-of-order events, etc.
+```
+
+Add pointers to these in AGENTS.md's "Where to Look" table and CLAUDE.md's Knowledge Base section.
+
+---
+
 ## Step 7: CI Integration
 
 If the repo profile indicates an existing CI provider:
@@ -394,6 +459,9 @@ By the end of this phase, the following files should be queued or written:
 | docs/tech-debt-tracker.md | Generated | Generated |
 | docs/adr/template.md | Generated | Generated |
 | docs/adr/001-adopt-harness-engineering.md | Generated | Generated |
+| docs/SECURITY.md | Generated if domain risk detected | Generated if domain risk detected |
+| docs/RELIABILITY.md | Generated if domain risk detected | Generated if domain risk detected |
+| tests/fixtures/ | Generated if external integrations | Generated if external integrations |
 | .editorconfig | Generated if missing | Generated |
 | Makefile or task runner | Generated if missing | Generated (with `check` target) |
 | Pre-commit hook config | Generated if missing | Generated |

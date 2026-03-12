@@ -211,7 +211,28 @@ Tag prescriptive sections with `<!-- EVOLVE: description -->` so they can be ref
 
 ---
 
-### 8. Knowledge Base Assessment
+### 8. Domain Risk Assessment
+
+Evaluate whether the project faces hostile external boundaries that warrant domain-aware harness artifacts. See `reference/domain-harness-guide.md` for full guidance.
+
+**Detection signals:**
+- Multiple external API integrations (REST clients, SDK imports, webhook handlers)
+- Financial transactions or fund movement (payment processors, exchanges, ledgers)
+- Real-time data streams (websocket connections, SSE handlers, polling loops)
+- Multi-provider aggregation (normalizing data from diverse external sources)
+- Security-sensitive operations (signing, auth token management, secrets)
+- Reconciliation patterns (balance checks, state synchronization, idempotency keys)
+
+**If domain risk signals are detected**, record:
+- **Risk tier mapping**: Which code paths are low/medium/high risk
+- **External boundaries**: List all external services with their reliability characteristics
+- **Failure modes to harness**: Rate limits, auth failures, partial operations, connection drops, etc.
+- **Boundary validation status**: Does the codebase parse and validate external data at the edge?
+- **Fixture coverage**: Are critical failure modes reproducible in tests?
+
+This assessment feeds into Phase 2 to determine whether to generate `docs/SECURITY.md`, `docs/RELIABILITY.md`, test fixture directories, and tiered review boundaries.
+
+### 9. Knowledge Base Assessment
 
 Evaluate the project's readiness for a structured knowledge base:
 
@@ -235,6 +256,7 @@ The analysis output is consumed by Phase 2 (Generate). Ensure all of the followi
 - Pre-commit hook configuration (detected or prescribed)
 - Lint configuration strictness level (minimal, moderate, or strict)
 - Composite `check` command definition (format → lint → build → test)
+- Domain risk assessment (external boundaries, risk tier mapping, failure modes, fixture coverage)
 - Knowledge base assessment (existing docs, design decisions, dep docs, quality signals)
 - Monorepo analysis (if applicable): per-package profiles, cross-package dependency map, shared vs. package-specific conventions, workspace-level boundaries
 

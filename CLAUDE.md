@@ -79,7 +79,9 @@ Before writing any file in the target repo, check if it already exists. If it do
 
 ## Reference
 
-Read `reference/harness-principles.md` for background on the ten harness engineering principles that guide artifact generation.
+Read `reference/harness-principles.md` for background on the twelve harness engineering principles, the operating doctrine, and the "every failure is a harness gap" meta-principle that guide artifact generation.
+
+Read `reference/domain-harness-guide.md` for guidance on generating domain-aware harness artifacts for projects with hostile external boundaries (API platforms, financial systems, multi-provider aggregators).
 
 Read `reference/lint-remediation-guide.md` for guidance on configuring linters and resolving common lint issues in generated files.
 

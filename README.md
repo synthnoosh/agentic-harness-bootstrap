@@ -66,13 +66,17 @@ The bootstrap runs four sequential phases. Each phase produces output that the n
 
 Every generated file includes **harness evolution rules** — standing instructions that tell agents to keep the harness current as the project grows.
 
-## The 10 Harness Engineering Principles
+## The 12 Harness Engineering Principles
+
+> **Do not build the software directly; build the harness that makes correct software the easiest thing for agents to produce.**
+
+Every failure is a harness gap. When an agent makes a mistake, the answer is not "prompt better" — it's: what capability was missing? What constraint was unclear? What feedback signal was absent?
 
 | # | Principle | In practice |
 |-|-|-|
 | 1 | **Deterministic verification** | Verify agent output with automated checks — don't trust, verify |
 | 2 | **Semantic linting** | Linter messages teach agents how to fix violations in one shot |
-| 3 | **Three-tier boundaries** | Every harness defines Always / Ask / Never action categories |
+| 3 | **Three-tier boundaries** | Always / Ask / Never — tiered by blast radius |
 | 4 | **Fail-fast feedback** | Fast checks first (lint, typecheck), slow checks later (integration) |
 | 5 | **Architecture as map** | `ARCHITECTURE.md` tells agents where things are, not why they exist |
 | 6 | **Repository as system of record** | If agents can't see it in the repo, it doesn't exist |
@@ -80,8 +84,10 @@ Every generated file includes **harness evolution rules** — standing instructi
 | 8 | **Mechanical enforcement** | When docs fail to prevent mistakes, promote the rule to a linter or test |
 | 9 | **Entropy management** | Quality grades, recurring cleanup, golden principles — garbage-collect drift |
 | 10 | **Boring tech preference** | Stable, composable, well-documented tech reduces agent friction |
+| 11 | **Behavior legibility** | Agents need observability (logs, metrics, traces), not just source code |
+| 12 | **Boundary control** | Parse, validate, normalize all external data at the edge |
 
-See [`reference/harness-principles.md`](reference/harness-principles.md) for detailed explanations with examples.
+See [`reference/harness-principles.md`](reference/harness-principles.md) for the operating doctrine, meta-principles, and detailed explanations with examples.
 
 ## Examples
 
@@ -131,7 +137,8 @@ agentic-harness-bootstrap/
 ├── scripts/
 │   └── check-examples.sh        # Validates examples match template structure
 ├── reference/
-│   ├── harness-principles.md    # The 10 harness engineering principles
+│   ├── harness-principles.md    # The 12 principles + operating doctrine
+│   ├── domain-harness-guide.md  # Hostile external boundaries, API platforms
 │   └── lint-remediation-guide.md
 └── examples/
     ├── go-service/              # Example output: Go microservice
@@ -167,6 +174,7 @@ This repo is itself harness-engineered. When contributing:
 
 ## Further Reading
 
-- [Harness Engineering Principles](reference/harness-principles.md) — the five principles in depth
+- [Harness Engineering Principles](reference/harness-principles.md) — the twelve principles, operating doctrine, and "every failure is a harness gap" meta-principle
+- [Domain Harness Guide](reference/domain-harness-guide.md) — generating harnesses for hostile external boundaries (API platforms, financial systems, multi-provider aggregators)
 - [Lint Remediation Guide](reference/lint-remediation-guide.md) — configuring linters for agent-friendly output
 - [ADR Template](templates/adr-template.md.tmpl) — architectural decision records

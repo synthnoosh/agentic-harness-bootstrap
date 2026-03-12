@@ -1,6 +1,52 @@
 # Harness Engineering Principles
 
-Five principles for building repos that AI agents can work in reliably. These apply whether you're bootstrapping a new harness or improving an existing one.
+Do not build the software directly; build the harness that makes correct software the easiest thing for agents to produce. **Build the machine that builds the software.**
+
+Harness engineering means engineering the conditions under which agents can repeatedly produce correct software, instead of treating hand-written code as the primary unit of work. The durable principle is: **humans should spend their time on leverage** — architecture, constraints, feedback loops, runtime visibility, and repository knowledge — **and agents should spend their time generating and iterating on implementation inside that harness.**
+
+The engineering loop:
+
+```
+specify intent → let agents act → observe failures → convert failures into better harnesses → repeat
+```
+
+When an agent fails, the answer is usually not "prompt better" or "patch it manually." The answer is: what capability was missing? What constraint was unclear? What feedback signal was absent? What knowledge was not visible in-repo? What rule should become mechanical instead of social?
+
+---
+
+## Operating Doctrine
+
+These eight statements govern any harness-engineered repository:
+
+1. **Humans write constraints; agents write implementations.**
+2. **The repo is the only source of truth agents can rely on.**
+3. **Every external boundary is validated and normalized.**
+4. **Every important behavior is testable and observable.**
+5. **Architecture is enforced mechanically, not socially.**
+6. **Every repeated review comment becomes a rule, test, or doc.**
+7. **Every bug becomes a fixture, replay, or harness check.**
+8. **Every form of drift is paid down continuously.**
+
+---
+
+## Treat Every Failure as a Harness Gap
+
+If an agent made a bad change, assume one of these was missing:
+
+- Architecture boundary
+- Validation rule
+- Documentation
+- Observability
+- Test harness
+- Reproducible fixture
+- Review automation
+- Quality gate
+
+A failure is a signal to improve the system, not just fix the instance. This meta-principle governs all ten principles below.
+
+---
+
+The ten principles below operationalize this doctrine. They apply whether you're bootstrapping a new harness or improving an existing one.
 
 ---
 
@@ -88,6 +134,17 @@ In an `AGENTS.md`:
 - Removing test files
 - Changing authentication/authorization logic without review
 ```
+
+**Tiered strictness by blast radius:**
+Not all code paths deserve the same level of scrutiny. Match merge/review intensity to risk:
+
+| Risk tier | Examples | Gate |
+|-|-|-|
+| Low | Docs, tooling, UI cosmetics | Faster path — agent review may suffice |
+| Medium | Business logic, API routes | Standard checks + human or agent review |
+| High | Auth, payments, fund movement, data migration | Strongest validation, replay, and explicit human review |
+
+Harness engineering does not mean "be loose." It means put strictness into the harness, especially where blast radius is high.
 
 **Anti-pattern:**
 A single long list of "rules" with no priority or categorization. When everything is equally important, nothing is. Agents need to know the difference between "always do this" and "check with a human first."
@@ -342,13 +399,65 @@ Adopting the newest framework because it's trendy, then spending weeks teaching 
 
 ---
 
+## 11. Behavior Legibility
+
+**Principle:** Make system behavior — not just source code — directly inspectable by agents. Agents need access to tests, logs, metrics, traces, runtime errors, UI flows, and reproducible local environments.
+
+**Why it matters for agents:**
+Code legibility lets agents read what the system _should_ do. Behavior legibility lets agents verify what the system _actually_ does. The more of the system the agent can inspect and verify, the more autonomous it can become.
+
+An agent that can boot the app, drive UI flows, query logs, and observe traces can reproduce bugs, validate fixes, and reason about behavior directly — rather than guessing from source code alone.
+
+**Concrete example:**
+Make the application bootable per git worktree so agents can launch isolated instances:
+
+```
+# Each worktree gets its own app instance, logs, and metrics
+App → Logs (LogQL) → Agent can query
+App → Metrics (PromQL) → Agent can query
+App → Traces (TraceQL) → Agent can query
+App → UI (Chrome DevTools) → Agent can screenshot and inspect DOM
+```
+
+With this setup, prompts like "ensure service startup completes in under 800ms" or "no span in these four critical user journeys exceeds two seconds" become tractable. Agents can validate their own work against runtime behavior, not just static analysis.
+
+**Anti-pattern:**
+Agents that can only read source code and run tests. They can't see logs, can't observe metrics, can't drive the UI, and can't reproduce production behavior. Every validation requires a human to check manually — defeating the purpose of agent-first engineering.
+
+---
+
+## 12. Boundary Control
+
+**Principle:** All external data is untrusted at the boundary. Parse, validate, and normalize immediately. Internal code trusts typed interfaces.
+
+**Why it matters for agents:**
+Systems that interact with external services — APIs, databases, third-party SDKs, user input — face inconsistent schemas, unreliable connections, and ambiguous error states. If agents are allowed to work with raw external payloads, they will build on guessed shapes and produce fragile code.
+
+The fix: draw a hard line at the boundary. External data is parsed and validated into canonical internal types at the edge. Everything inward works with typed, validated, exchange-agnostic shapes. Connectors are adapters that translate between external weirdness and your canonical domain — nothing more.
+
+**Concrete example:**
+For a platform that integrates with multiple external services:
+
+```
+External API → Connector (parse + validate) → Canonical Domain Types → Service Logic
+```
+
+The connector's job is translation: take the external response, validate it, and produce a typed internal representation. If validation fails, the failure is captured as a structured error — never silently passed through.
+
+Agents working inside the service layer never see raw external payloads. They work with predictable, typed interfaces. This makes agent-generated code dramatically more reliable.
+
+**Anti-pattern:**
+Raw external responses flowing through the system unchecked. Agents guessing at data shapes. Multiple inconsistent representations of the same domain concept. No clear line between "trusted internal data" and "untrusted external data."
+
+---
+
 ## Summary
 
 | # | Principle | One-liner |
 |-|-|-|
 | 1 | Deterministic verification | Automate checks; don't trust agent output |
 | 2 | Semantic linting | Error messages should teach the fix |
-| 3 | Three-tier boundaries | Always / Ask / Never |
+| 3 | Three-tier boundaries | Always / Ask / Never — tiered by blast radius |
 | 4 | Fail-fast feedback | Fast checks first, slow checks last |
 | 5 | Architecture as map | Where things are, not why they exist |
 | 6 | Repository as system of record | If agents can't see it, it doesn't exist |
@@ -356,5 +465,9 @@ Adopting the newest framework because it's trendy, then spending weeks teaching 
 | 8 | Mechanical enforcement | When docs fail, promote the rule to code |
 | 9 | Entropy management | Measure, grade, clean up continuously |
 | 10 | Boring tech preference | Stable, composable, well-documented tech wins |
+| 11 | Behavior legibility | Agents need observability, not just source code |
+| 12 | Boundary control | Parse, validate, normalize all external data at the edge |
 
-These principles compound. Verification catches mistakes (1). Semantic linting helps agents fix them in one shot (2). Boundaries prevent mistakes in the first place (3). Fast feedback makes the loop faster (4). Architecture as map tells agents where to work (5). Repository as system of record gives agents the context they need (6). Progressive disclosure keeps context manageable (7). Mechanical enforcement replaces repeated instructions with automated checks (8). Entropy management keeps the codebase legible over time (9). And boring tech reduces friction at every step (10).
+These principles compound. Verification catches mistakes (1). Semantic linting helps agents fix them in one shot (2). Boundaries prevent mistakes in the first place (3). Fast feedback makes the loop faster (4). Architecture as map tells agents where to work (5). Repository as system of record gives agents the context they need (6). Progressive disclosure keeps context manageable (7). Mechanical enforcement replaces repeated instructions with automated checks (8). Entropy management keeps the codebase legible over time (9). Boring tech reduces friction at every step (10). Behavior legibility lets agents verify their own work against runtime behavior (11). Boundary control ensures agents work with predictable, validated data (12).
+
+Remember the meta-principle: **every failure is a harness gap.** When something goes wrong, don't fix just the instance — improve the system.
