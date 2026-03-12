@@ -1,0 +1,91 @@
+---
+name: harness-audit
+description: This skill should be used when auditing current changes, a PR, or the overall repository against the 12 harness engineering principles. It produces a scorecard showing pass/gap/recommendation per principle. Triggers on "audit harness", "check principles", "harness compliance", "are these changes harness-compliant", or when reviewing changes for harness engineering adherence.
+---
+
+# Harness Audit
+
+Audit code changes or repository state against the 12 harness engineering principles. Produce a scorecard with pass/gap/recommendation for each principle.
+
+## When to Use
+
+- Before merging a PR, to verify changes maintain harness quality
+- After bootstrapping, to validate the generated harness
+- On session start, as part of a drift check
+- When a failure occurs, to identify which harness gap allowed it
+
+## Audit Process
+
+### Step 1: Determine Scope
+
+Identify what to audit based on context:
+
+- **Current changes**: Run `git diff HEAD` and `git diff --cached` to see staged and unstaged changes.
+- **PR diff**: Run `git diff main...HEAD` (or the appropriate base branch) to see all changes in the PR.
+- **Full repo**: When no changes exist or a full audit is requested, audit the repo state as-is.
+
+Collect the list of changed files and their diffs. Also read the repo's `CLAUDE.md`, `AGENTS.md`, and `ARCHITECTURE.md` to understand the current harness state.
+
+### Step 2: Load Principles Checklist
+
+Read the principles checklist at `references/principles-checklist.md` (relative to this skill). This contains the specific audit criteria for each of the 12 principles.
+
+### Step 3: Evaluate Each Principle
+
+For each principle, evaluate the changes (or repo state) against the checklist criteria. Assign one of three verdicts:
+
+- **PASS** — The principle is satisfied. Evidence exists in the changes or repo.
+- **GAP** — The principle is not satisfied. Something is missing or violated.
+- **N/A** — The principle does not apply to these specific changes (e.g., no external boundaries touched, so Principle 12 is N/A).
+
+For each GAP, write a specific, actionable recommendation. Follow the semantic linting philosophy: tell the agent (or human) exactly what to do to close the gap.
+
+### Step 4: Produce Scorecard
+
+Output the scorecard in this format:
+
+```
+## Harness Audit Scorecard
+
+| # | Principle | Verdict | Finding |
+|---|-----------|---------|---------|
+| 1 | Deterministic verification | PASS/GAP/N/A | [specific finding] |
+| 2 | Semantic linting | PASS/GAP/N/A | [specific finding] |
+| 3 | Three-tier boundaries | PASS/GAP/N/A | [specific finding] |
+| 4 | Fail-fast feedback | PASS/GAP/N/A | [specific finding] |
+| 5 | Architecture as map | PASS/GAP/N/A | [specific finding] |
+| 6 | Repo as system of record | PASS/GAP/N/A | [specific finding] |
+| 7 | Progressive disclosure | PASS/GAP/N/A | [specific finding] |
+| 8 | Mechanical enforcement | PASS/GAP/N/A | [specific finding] |
+| 9 | Entropy management | PASS/GAP/N/A | [specific finding] |
+| 10 | Boring tech preference | PASS/GAP/N/A | [specific finding] |
+| 11 | Behavior legibility | PASS/GAP/N/A | [specific finding] |
+| 12 | Boundary control | PASS/GAP/N/A | [specific finding] |
+
+**Score: X/Y passed** (Z not applicable)
+```
+
+### Step 5: Prioritized Recommendations
+
+After the scorecard, list gaps ordered by severity (highest blast-radius first). Each recommendation must include:
+
+1. **What** is missing
+2. **Where** to fix it (specific file and section)
+3. **How** to fix it (concrete action, not vague advice)
+
+Format:
+
+```
+## Recommendations
+
+### [GAP] Principle N: Name
+**What**: [description of gap]
+**Where**: [file:section]
+**How**: [specific remediation action]
+```
+
+## Evaluation Guidance
+
+When evidence is ambiguous, lean toward GAP. A false GAP that gets investigated is better than a false PASS that lets a harness weakness through. The meta-principle is: every failure is a harness gap — auditing should surface gaps before they become failures.
+
+Do not infer that a principle is satisfied just because it is not visibly violated. Positive evidence is required for a PASS verdict — the absence of a problem is not the same as the presence of a solution.

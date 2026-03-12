@@ -407,6 +407,41 @@ If no CI provider is configured, skip this step and note it in the Phase 3 repor
 
 ---
 
+## Step 7a: Skills Installation
+
+Install harness skills into the target repo. Skills are self-contained Claude Code skill packages that provide specialized workflows.
+
+### harness-audit Skill
+
+Copy from `templates/skills/harness-audit/` to `.claude/skills/harness-audit/` in the target repo:
+
+```
+.claude/skills/harness-audit/
+├── SKILL.md              # Rendered from SKILL.md.tmpl (no repo-specific variables — copy as-is, renaming to SKILL.md)
+└── references/
+    └── principles-checklist.md  # Static — copy as-is
+```
+
+The `SKILL.md.tmpl` has no template variables — rename it to `SKILL.md` when copying.
+
+After installation, add a pointer to the skill in the target repo's `CLAUDE.md` under the Knowledge Base table:
+
+```markdown
+| Harness audit skill | [.claude/skills/harness-audit/](./.claude/skills/harness-audit/) |
+```
+
+And add a note to the AGENTS.md "Where to Look" table:
+
+```markdown
+| Audit changes against harness principles | `.claude/skills/harness-audit/` — invoke with `/harness-audit` |
+```
+
+### Future Skills
+
+Additional skills can be added to `templates/skills/` following the same pattern. Each skill directory must contain a `SKILL.md` (or `SKILL.md.tmpl` if templated) and optional `references/`, `scripts/`, or `assets/` subdirectories.
+
+---
+
 ## Step 8: Harness Evolution Rules
 
 Embed the following rules in **every generated agent instruction file** (CLAUDE.md, AGENTS.md):
@@ -462,6 +497,7 @@ By the end of this phase, the following files should be queued or written:
 | docs/SECURITY.md | Generated if domain risk detected | Generated if domain risk detected |
 | docs/RELIABILITY.md | Generated if domain risk detected | Generated if domain risk detected |
 | tests/fixtures/ | Generated if external integrations | Generated if external integrations |
+| .claude/skills/harness-audit/ | Generated | Generated |
 | .editorconfig | Generated if missing | Generated |
 | Makefile or task runner | Generated if missing | Generated (with `check` target) |
 | Pre-commit hook config | Generated if missing | Generated |
