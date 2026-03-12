@@ -1,0 +1,27 @@
+---
+variables:
+  output_dirs: "Array of build output directories to cache (e.g., ['dist/**', '.next/**'])"
+---
+
+{
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": {{output_dirs}}
+    },
+    "lint": {
+      "dependsOn": ["^build"]
+    },
+    "test": {
+      "dependsOn": ["build"]
+    },
+    "check": {
+      "dependsOn": ["lint", "build", "test"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    }
+  }
+}

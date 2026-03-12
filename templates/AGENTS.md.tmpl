@@ -19,7 +19,7 @@ variables:
 
 # Agent Instructions for {{project_name}}
 
-<!-- Keep in sync with CLAUDE.md and .github/copilot-instructions.md -->
+<!-- Keep in sync with CLAUDE.md -->
 
 You are working on {{project_name}}, a {{framework}} project written in {{primary_language}}.
 
@@ -91,7 +91,7 @@ These are hard prohibitions. Do not do them under any circumstances:
 Apply these standing orders automatically when the triggering condition is met:
 
 1. **Module added** → Add a row to the Module Map in `ARCHITECTURE.md`.
-2. **Command added** → Update the Commands section here and in sibling agent files (`CLAUDE.md`, `.github/copilot-instructions.md`).
+2. **Command added** → Update the Commands section here and in `CLAUDE.md`.
 3. **Agent mistake** → Add a Boundaries rule (Always / Ask / Never) to prevent recurrence.
 4. **Architectural decision** → Create a numbered ADR in `docs/adr/` using the project ADR template.
 5. **Session start** → Drift check: verify `ARCHITECTURE.md` modules match real directories, confirm commands work, flag staleness.

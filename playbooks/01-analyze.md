@@ -95,19 +95,76 @@ If `monorepo` is true in the repo profile, perform the following additional anal
 
 If `greenfield` is true, prescribe the following based on the engineer's answers from Phase 0.
 
+### Minimal Scaffolding Principle
+
+**CRITICAL**: Greenfield scaffolding must be **minimal**. Only generate the framework's bare minimum working skeleton — the smallest set of files needed for `build`, `test`, and `lint` to pass.
+
+**Do NOT** create domain-specific modules, directories, or code based on the user's feature description. At greenfield stage, the architecture and problem space have not been properly designed. Creating premature structure leads to:
+
+- Directories that get reorganized or deleted as design evolves
+- Misleading ARCHITECTURE.md that describes aspiration, not reality
+- Agents treating placeholder directories as established boundaries
+
+Instead:
+- Create only what the framework requires to boot (e.g., `app.module.ts`, `main.ts` for NestJS)
+- List planned domains in ARCHITECTURE.md under a `## Planned Modules` section with `<!-- EVOLVE -->` markers
+- Let modules emerge organically as features are built
+
 ### 1. Architecture Layers — Recommended Structure
 
-Prescribe the idiomatic project structure for the chosen language and framework:
+Prescribe the **minimal** idiomatic project structure for the chosen language and framework. Only include directories that the framework requires to function:
 
-- **Go**: `cmd/`, `internal/`, `pkg/`, `api/`, `configs/`
+- **Go**: `cmd/{appname}/`, `internal/`, `configs/`
 - **Laravel**: `app/`, `routes/`, `resources/`, `database/`, `config/`, `tests/`
-- **React / Next.js**: `src/components/`, `src/hooks/`, `src/services/`, `src/lib/`, `src/app/` or `src/pages/`
-- **Python (general)**: `src/{package}/`, `tests/`, `docs/`
-- **FastAPI**: `app/`, `app/routers/`, `app/models/`, `app/services/`, `tests/`
-- **Rust**: `src/`, `src/bin/`, `tests/`, `benches/`
+- **React / Next.js**: `src/app/` or `src/pages/`, `src/lib/`
+- **Python (general)**: `src/{package}/`, `tests/`
+- **FastAPI**: `app/`, `tests/`
+- **NestJS**: `src/`, `test/`
+- **Rust**: `src/`
 - **Ruby on Rails**: `app/`, `config/`, `db/`, `lib/`, `spec/` or `test/`
 
+Do not add domain-specific subdirectories (e.g., `src/market/`, `src/auth/`). Those will be created when the features are actually built.
+
 If the language/framework is not listed, research the community-standard layout.
+
+### 1a. Monorepo Structure
+
+If `monorepo` is true in the repo profile, prescribe a workspace structure using the chosen monorepo tooling:
+
+**Turborepo + pnpm** (recommended for Node/TS):
+```
+apps/
+  {app-name}/          # The primary application (e.g., NestJS API)
+packages/              # Shared libraries (created as needed)
+turbo.json             # Turborepo pipeline configuration
+pnpm-workspace.yaml    # Workspace package globs
+package.json           # Root package.json (workspace scripts, shared devDependencies)
+```
+
+**Nx**:
+```
+apps/
+  {app-name}/
+libs/
+nx.json
+package.json
+```
+
+**Cargo workspace**:
+```
+crates/
+  {crate-name}/
+Cargo.toml             # [workspace] config
+```
+
+**Go workspace**:
+```
+cmd/{app-name}/
+internal/
+go.work
+```
+
+Start with a single app and zero shared packages. Add packages to `packages/` only when code needs to be shared between multiple apps.
 
 ### 2. Conventions — Language Defaults
 
@@ -119,10 +176,11 @@ Prescribe community-standard conventions:
 
 ### 3. Build / Test / Lint Commands
 
-Prescribe the standard toolchain:
+Prescribe the standard toolchain. For monorepos, prescribe both workspace-level and per-package commands:
 
 - **Go**: `go build ./...`, `go test ./...`, `golangci-lint run`
-- **Node/TS**: `npm run build`, `npm test` (or vitest/jest), `npm run lint`
+- **Node/TS (single)**: `npm run build`, `npm test`, `npm run lint`
+- **Node/TS (turbo monorepo)**: `pnpm build` / `turbo build`, `pnpm test` / `turbo test`, `pnpm lint` / `turbo lint`
 - **Python**: `python -m build`, `pytest`, `ruff check .`
 - **Rust**: `cargo build`, `cargo test`, `cargo clippy`
 

@@ -60,7 +60,7 @@ For every file generated or modified in Phase 2:
 Validate internal consistency across generated files:
 
 1. **Module names in ARCHITECTURE.md** — Every module listed in the module map must correspond to an actual directory in the repository.
-2. **Commands in agent files** — Every build/test/lint command referenced in CLAUDE.md, AGENTS.md, and copilot-instructions.md must be the same and must be runnable.
+2. **Commands in agent files** — Every build/test/lint command referenced in CLAUDE.md and AGENTS.md must be the same and must be runnable.
 3. **ADR references** — If ARCHITECTURE.md links to ADRs, confirm those ADR files exist.
 4. **Path references** — Any file path mentioned in generated docs must exist in the repo.
 
@@ -80,16 +80,12 @@ Read each generated agent instruction file and verify:
    - Contains the same commands as CLAUDE.md.
    - Boundary rules use ALWAYS/ASK/NEVER prefixes.
 
-3. **.github/copilot-instructions.md**:
-   - Contains coding conventions.
-   - Contains test expectations.
-
-4. **ARCHITECTURE.md**:
+3. **ARCHITECTURE.md**:
    - Contains module map.
    - Contains dependency rules.
    - Greenfield: contains `<!-- EVOLVE -->` markers.
 
-5. **docs/adr/001-adopt-harness-engineering.md**:
+4. **docs/adr/001-adopt-harness-engineering.md**:
    - Follows the ADR template structure (Status, Context, Decision, Consequences).
 
 ---
@@ -127,7 +123,7 @@ Run the generated verification harness:
 
 Verify commands in all agent instruction files are consistent:
 
-1. Extract build/test/lint commands from CLAUDE.md, AGENTS.md, and `.github/copilot-instructions.md`.
+1. Extract build/test/lint commands from CLAUDE.md and AGENTS.md.
 2. Confirm all three files reference the same commands with the same arguments.
 3. Flag any discrepancies as errors.
 
@@ -206,13 +202,12 @@ Use this checklist to confirm all verification steps are complete:
 - [ ] **Path references**: All referenced paths exist
 - [ ] **CLAUDE.md smoke test**: All required sections present
 - [ ] **AGENTS.md smoke test**: All required sections present
-- [ ] **copilot-instructions.md smoke test**: All required sections present
 - [ ] **ARCHITECTURE.md smoke test**: All required sections present
 - [ ] **ADR-001 smoke test**: Follows template structure
 - [ ] **Pre-commit hook config**: References valid commands
 - [ ] **Lint config**: Parses without syntax errors
 - [ ] **Verification script**: `scripts/verify-harness.sh` passes
-- [ ] **Agent file synchronization**: Commands consistent across CLAUDE.md, AGENTS.md, copilot-instructions.md
+- [ ] **Agent file synchronization**: Commands consistent across CLAUDE.md and AGENTS.md
 - [ ] **Composite command**: `make check` (or equivalent) runs successfully
 - [ ] **Monorepo consistency** (if applicable): Per-package profiles match root, cross-package deps match imports
 - [ ] **Report generated**: Summary of created, modified, skipped files and issues

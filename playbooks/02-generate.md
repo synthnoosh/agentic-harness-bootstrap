@@ -52,32 +52,64 @@ If in doubt about whether something is a customization, **treat it as a customiz
 
 For repos where `greenfield` is true, generate the foundational project structure.
 
-### Directory Structure
+### Minimal Scaffolding Principle
 
-Create the recommended directory structure from Phase 1's architecture prescription:
+**CRITICAL**: Only generate the **minimum viable skeleton** — the smallest set of files needed for `build`, `test`, and `lint` commands to pass. Do NOT create domain-specific directories or modules based on the user's feature description.
+
+For example, a NestJS project gets:
+- `src/main.ts`, `src/app.module.ts`, `src/app.controller.ts`, `src/app.service.ts`, `src/app.controller.spec.ts`
+- `test/` for e2e tests
+
+It does NOT get: `src/market/`, `src/auth/`, `src/credits/`, etc. Those emerge when the features are actually built.
+
+### Monorepo Scaffolding
+
+If `monorepo` is true in the repo profile, generate the workspace structure before the app skeleton.
+
+**Turborepo + pnpm** (generate from `templates/monorepo/`):
 
 ```
-# Example for a TypeScript API project
-src/
-  routes/
-  services/
-  models/
-  middleware/
-  lib/
-tests/
-  unit/
-  integration/
+pnpm-workspace.yaml        # from templates/monorepo/pnpm-workspace.yaml.tmpl
+turbo.json                  # from templates/monorepo/turbo.json.tmpl
+package.json                # Root package.json with workspace scripts
+apps/
+  {app-name}/               # The primary app — generate the framework skeleton here
+    package.json             # App-specific package.json
+    tsconfig.json            # App-specific tsconfig
+    src/                     # Framework skeleton (minimal)
+    test/                    # Test directory
+packages/                   # Empty — shared packages created as needed
+  .gitkeep
 docs/
   adr/
 ```
 
-Place a `.gitkeep` in empty directories so they are tracked.
+For monorepos, all harness artifacts (CLAUDE.md, AGENTS.md, ARCHITECTURE.md) go at the **workspace root**. Per-package agent files are only generated when packages have distinct stacks.
+
+Commands in agent files should use workspace-level invocations:
+- `pnpm build` / `turbo build` (not `npm run build`)
+- `pnpm test` / `turbo test`
+- `pnpm lint` / `turbo lint`
+
+### Single-Package Scaffolding
+
+If `monorepo` is false, generate the framework's minimal skeleton directly at the repo root:
+
+```
+src/                     # Framework skeleton (minimal files only)
+test/                    # Test directory
+docs/
+  adr/
+```
 
 ### Starter Configuration
 
 - **.editorconfig** — Consistent editor settings (indent style, final newline, trailing whitespace).
+- **.gitignore** — Language-appropriate ignores.
 - **Linting config** — Starter config for the prescribed linter (eslint, ruff, golangci-lint, etc.).
 - **Formatting config** — If the formatter needs a config file (prettier, etc.), create it with defaults.
+
+Place a `.gitkeep` in empty directories so they are tracked.
 
 ### Task Runner
 
@@ -102,7 +134,7 @@ clean:
 	$(CLEAN_CMD)
 ```
 
-Adapt the task runner to the ecosystem (Makefile for Go/C/Python, npm scripts for Node, Cargo aliases for Rust).
+Adapt the task runner to the ecosystem (Makefile for Go/C/Python, npm scripts for Node, Cargo aliases for Rust). For **turbo monorepos**, the Makefile delegates to `turbo`/`pnpm` commands.
 
 ---
 
@@ -167,14 +199,6 @@ Place at the repository root. Same core content as CLAUDE.md, structured for mul
 - Commands formatted as code blocks with explicit working directory.
 - Boundary rules formatted as bullet lists with clear prefixes (ALWAYS:, ASK:, NEVER:).
 
-### .github/copilot-instructions.md
-
-Place in `.github/`. Adapted for GitHub Copilot's instruction format:
-
-- Concise rules, one per line where possible.
-- Focus on code generation conventions (naming, patterns, imports).
-- Include test expectations (what a generated test should look like).
-
 ---
 
 ## Step 5: ARCHITECTURE.md
@@ -203,7 +227,10 @@ Place at the repository root. Structure:
 <!-- EVOLVE: Add data flow documentation -->
 ```
 
-For greenfield repos, populate with the prescribed structure and mark sections with `<!-- EVOLVE -->` markers.
+For greenfield repos:
+- The **Module Map** should only list modules that actually exist as directories (i.e., the minimal skeleton).
+- Add a **Planned Modules** section listing domains the user described, each marked with `<!-- EVOLVE -->`. These are aspirational — they do not correspond to directories yet.
+- Mark all sections with `<!-- EVOLVE -->` markers.
 
 For brownfield repos, populate from the Phase 1 analysis.
 
@@ -271,7 +298,7 @@ If no CI provider is configured, skip this step and note it in the Phase 3 repor
 
 ## Step 8: Harness Evolution Rules
 
-Embed the following rules in **every generated agent instruction file** (CLAUDE.md, AGENTS.md, copilot-instructions.md):
+Embed the following rules in **every generated agent instruction file** (CLAUDE.md, AGENTS.md):
 
 ```markdown
 ## Harness Evolution
@@ -279,7 +306,7 @@ Embed the following rules in **every generated agent instruction file** (CLAUDE.
 These files are living documents. Update them as the project evolves:
 
 - **After adding a new module**: Update ARCHITECTURE.md module map and dependency rules.
-- **After adding a new command**: Update the Commands section in all agent instruction files.
+- **After adding a new command**: Update the Commands section in CLAUDE.md and AGENTS.md.
 - **After an agent makes a mistake**: Add a rule to the Boundaries section to prevent recurrence.
 - **After an architectural decision**: Create a new ADR in docs/adr/.
 - **On session start**: Quick-check that commands still work and module list matches reality.
@@ -293,7 +320,7 @@ These rules ensure the harness stays in sync with the codebase over time.
 
 If `monorepo` is true in the repo profile, generate workspace-aware artifacts:
 
-- **Root-level agent files**: Generate root CLAUDE.md, AGENTS.md, and `.github/copilot-instructions.md` containing workspace-wide commands (e.g., `pnpm -r build`, `cargo build --workspace`) and shared conventions that apply across all packages.
+- **Root-level agent files**: Generate root CLAUDE.md and AGENTS.md containing workspace-wide commands (e.g., `pnpm build`, `turbo build`, `cargo build --workspace`) and shared conventions that apply across all packages.
 - **Per-package agent files**: If workspace packages have distinct stacks or conventions, generate package-level agent instruction files within each package directory. These contain package-specific commands, conventions, and boundaries.
 - **Root ARCHITECTURE.md**: Map all workspace packages and their inter-package relationships. Include a package dependency diagram and document which packages are libraries vs. applications.
 - **Per-package ARCHITECTURE.md**: For each package with sufficient complexity, generate an ARCHITECTURE.md that maps the internal module structure within that package.
@@ -309,7 +336,6 @@ By the end of this phase, the following files should be queued or written:
 |-|-|-|
 | CLAUDE.md | Generated or merged | Generated |
 | AGENTS.md | Generated or merged | Generated |
-| .github/copilot-instructions.md | Generated or merged | Generated |
 | ARCHITECTURE.md | Generated or merged | Generated (minimal + EVOLVE markers) |
 | docs/adr/template.md | Generated | Generated |
 | docs/adr/001-adopt-harness-engineering.md | Generated | Generated |
@@ -319,7 +345,9 @@ By the end of this phase, the following files should be queued or written:
 | Lint configuration | Generated if missing | Generated |
 | scripts/verify-harness.sh | Generated (executable) | Generated (executable) |
 | CI agent-lint job | Added if CI exists | Skipped unless CI exists |
-| Directory scaffolding | N/A | Generated |
+| Directory scaffolding | N/A | Generated (minimal skeleton only) |
+| pnpm-workspace.yaml (monorepo) | N/A | Generated if turbo + pnpm |
+| turbo.json (monorepo) | N/A | Generated if turbo + pnpm |
 | Per-package agent files (monorepo) | Generated if distinct stacks | Generated if distinct stacks |
 | Per-package ARCHITECTURE.md (monorepo) | Generated per package | Generated per package |
 

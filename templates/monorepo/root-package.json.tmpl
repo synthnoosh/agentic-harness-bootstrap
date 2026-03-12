@@ -1,0 +1,23 @@
+---
+variables:
+  project_name: "Name of the project"
+---
+
+{
+  "name": "{{project_name}}",
+  "private": true,
+  "scripts": {
+    "build": "turbo build",
+    "test": "turbo test",
+    "lint": "turbo lint",
+    "check": "turbo check",
+    "dev": "turbo dev",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\"",
+    "verify": "./scripts/verify-harness.sh"
+  },
+  "devDependencies": {
+    "prettier": "^3.0.0",
+    "turbo": "^2.0.0"
+  },
+  "packageManager": "pnpm@9.15.0"
+}

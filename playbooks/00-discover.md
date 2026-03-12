@@ -22,10 +22,11 @@ Scan the repository root and one level of subdirectories for **source files** (e
 
 When the repo is empty or near-empty, ask the engineer the following questions before proceeding:
 
-1. **What are you building?** — API service, web app, CLI tool, library, mobile app, monorepo, or something else?
-2. **What language and framework?** — e.g., TypeScript + Next.js, Python + FastAPI, Go + stdlib, Rust + Axum.
-3. **What CI provider?** — GitHub Actions, GitLab CI, CircleCI, Jenkins, or none yet?
-4. **Any architectural preferences?** — Monorepo vs polyrepo, specific patterns (hexagonal, MVC, etc.), or constraints?
+1. **What are you building?** — API service, web app, CLI tool, library, mobile app, or something else?
+2. **What language and framework?** — e.g., TypeScript + NestJS, Python + FastAPI, Go + stdlib, Rust + Axum.
+3. **Monorepo or single package?** — If monorepo: what workspace tooling? (Turborepo + pnpm, Nx, Yarn workspaces, Cargo workspace, Go workspace). For Node/TS projects, recommend **Turborepo + pnpm** as the default.
+4. **What CI provider?** — GitHub Actions, GitLab CI, CircleCI, Jenkins, or none yet?
+5. **Any architectural preferences?** — Specific patterns (hexagonal, MVC, etc.), or constraints?
 
 Record answers and skip to Step 4 (Repo Profile), filling in what you know and marking the rest as TBD.
 
@@ -65,7 +66,7 @@ project_type: ""             # If greenfield: API, web-app, CLI, library, etc.
 # Language & framework
 languages: []                # All detected languages, e.g. ["TypeScript", "Python"]
 primary_language: ""         # The dominant language
-framework: ""                # Primary framework, e.g. "Next.js", "FastAPI"
+framework: ""                # Primary framework, e.g. "NestJS", "FastAPI"
 
 # Toolchain
 package_manager: ""          # npm, yarn, pnpm, poetry, cargo, go modules, etc.
@@ -81,6 +82,7 @@ ci_provider: ""              # GitHub Actions, GitLab CI, etc.
 # Structure
 module_structure: []         # Top-level modules/packages, e.g. ["src/api", "src/ui", "lib/"]
 monorepo: false              # Whether the repo is a monorepo
+monorepo_tool: ""            # Turborepo, Nx, Lerna, Cargo workspace, Go workspace, etc.
 workspace_packages: []       # If monorepo: list of {name, path, language} for each package/app
 existing_agent_files: []     # Paths to any pre-existing agent instruction files
 code_style_tools: []         # Linters/formatters in use, e.g. ["eslint", "prettier"]
