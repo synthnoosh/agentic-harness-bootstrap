@@ -45,7 +45,7 @@ For each signal below, run the detection method and record findings.
 | Test framework | Test directories (test/, tests/, __tests__, spec/), config files (jest.config.*, pytest.ini, vitest.config.*, .rspec, phpunit.xml) |
 | CI provider | .github/workflows/, .gitlab-ci.yml, Jenkinsfile, .circleci/, bitbucket-pipelines.yml, .travis.yml |
 | Module structure | Top-level directories, src/ layout, monorepo workspace config (pnpm-workspace.yaml, lerna.json, nx.json, turbo.json) |
-| Existing agent files | CLAUDE.md, AGENTS.md, .cursorrules, .github/copilot-instructions.md, .windsurfrules, .clinerules |
+| Existing agent files | CLAUDE.md, AGENTS.md, .cursorrules, .windsurfrules, .clinerules |
 | Code style | .eslintrc, .prettierrc, ruff.toml, .editorconfig, .stylelintrc, biome.json, rustfmt.toml, .golangci.yml |
 | Monorepo structure | Workspace config (`workspaces` in package.json, `pnpm-workspace.yaml`, go.work, Cargo workspace in Cargo.toml), multiple distinct apps/packages in subdirectories |
 

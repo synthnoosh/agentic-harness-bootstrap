@@ -1,0 +1,42 @@
+---
+variables:
+  project_name: "Name of the project"
+---
+
+# Core Beliefs — {{project_name}}
+
+Operating principles for agents working in this repository. These are not aspirational — they reflect how this project actually operates.
+
+## 1. Repository Is the Source of Truth
+
+Everything an agent needs to know lives here. If it's not in the repo, it doesn't exist for agents. Product context, design rationale, architectural decisions, and engineering conventions are all co-located with the code.
+
+When a decision is made in a meeting or chat, encode it here — as a design doc, an ADR, or an update to an existing document. Knowledge that lives only in people's heads is invisible to the system.
+
+## 2. Enforce, Don't Instruct
+
+Prefer mechanical enforcement (linters, tests, structural checks) over prose instructions. When an agent repeatedly violates a documented rule, promote the rule into a linter or test.
+
+Progression: **document → observe violations → encode as tooling → delete the prose**.
+
+## 3. Architecture Is Navigational
+
+Architecture docs tell agents where things are and what the rules are. They do not explain history, justify decisions, or describe aspirations. ADRs exist for rationale. Architecture docs exist for navigation.
+
+## 4. Boundaries Are Binary
+
+Every action is Always (do it), Ask (confirm first), or Never (forbidden). There are no "it depends" actions. If a boundary requires judgment, it should be in the Ask tier until enough context exists to promote it.
+
+## 5. Fast Feedback Over Thorough Feedback
+
+A fast signal that catches 80% of problems is more valuable than a slow signal that catches 100%. Structure the toolchain so agents get feedback in seconds on the most common failure modes.
+
+## 6. Minimal Over Complete
+
+Generate the minimum viable artifact. Don't create directories for modules that don't exist yet. Don't add configuration for features that aren't built. Let structure emerge from actual needs.
+
+## 7. Entropy Is the Default
+
+Without active management, agent-generated code drifts toward inconsistency. Quality grades, recurring cleanup, and golden principles are not optional — they are infrastructure.
+
+<!-- EVOLVE: Add project-specific beliefs as team norms emerge -->

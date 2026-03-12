@@ -1,6 +1,6 @@
 # Order Service
 
-<!-- Keep in sync with CLAUDE.md and .github/copilot-instructions.md -->
+<!-- Keep in sync with CLAUDE.md -->
 
 Go API microservice for order management. REST API backed by PostgreSQL and Redis.
 

@@ -124,8 +124,36 @@ Run the generated verification harness:
 Verify commands in all agent instruction files are consistent:
 
 1. Extract build/test/lint commands from CLAUDE.md and AGENTS.md.
-2. Confirm all three files reference the same commands with the same arguments.
+2. Confirm both files reference the same commands with the same arguments.
 3. Flag any discrepancies as errors.
+
+---
+
+## Step 9a: Knowledge Base Verification
+
+Verify the docs/ knowledge base structure is complete and consistent:
+
+1. **Directory structure**: Confirm the following exist:
+   - `docs/README.md` (knowledge base index)
+   - `docs/design-docs/index.md`
+   - `docs/design-docs/core-beliefs.md`
+   - `docs/exec-plans/template.md`
+   - `docs/exec-plans/active/`
+   - `docs/exec-plans/completed/`
+   - `docs/references/`
+   - `docs/QUALITY_SCORE.md`
+   - `docs/tech-debt-tracker.md`
+   - `docs/adr/`
+
+2. **Cross-references in AGENTS.md**: Verify that every path in the "Where to Look" table exists.
+
+3. **Cross-references in CLAUDE.md**: Verify that every path in the "Knowledge Base" table exists.
+
+4. **QUALITY_SCORE.md module list**: Verify that modules listed in QUALITY_SCORE.md match those in ARCHITECTURE.md.
+
+5. **Design docs index**: Verify that every file in `docs/design-docs/` is listed in `docs/design-docs/index.md`.
+
+6. **Freshness signals**: Check for `<!-- STALE: -->` markers across all docs. Report count as informational.
 
 ---
 
@@ -200,10 +228,15 @@ Use this checklist to confirm all verification steps are complete:
 - [ ] **Command consistency**: Same commands in all agent files
 - [ ] **ADR references**: All referenced ADRs exist
 - [ ] **Path references**: All referenced paths exist
-- [ ] **CLAUDE.md smoke test**: All required sections present
-- [ ] **AGENTS.md smoke test**: All required sections present
+- [ ] **CLAUDE.md smoke test**: All required sections present (including Knowledge Base)
+- [ ] **AGENTS.md smoke test**: All required sections present (including Where to Look)
 - [ ] **ARCHITECTURE.md smoke test**: All required sections present
 - [ ] **ADR-001 smoke test**: Follows template structure
+- [ ] **Knowledge base structure**: All required docs/ directories and files exist
+- [ ] **Knowledge base cross-refs**: AGENTS.md and CLAUDE.md paths resolve
+- [ ] **QUALITY_SCORE.md modules**: Match ARCHITECTURE.md module list
+- [ ] **Design docs index**: All files in design-docs/ are cataloged
+- [ ] **Freshness signals**: STALE markers counted and reported
 - [ ] **Pre-commit hook config**: References valid commands
 - [ ] **Lint config**: Parses without syntax errors
 - [ ] **Verification script**: `scripts/verify-harness.sh` passes

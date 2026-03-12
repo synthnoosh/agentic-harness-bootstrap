@@ -1,0 +1,48 @@
+---
+variables:
+  project_name: "Name of the project"
+  modules: "Array of {name, path, description} objects"
+---
+
+# Quality Score — {{project_name}}
+
+Grades each module on code quality, test coverage, documentation freshness, and architectural compliance. Updated regularly by automated scans and human review.
+
+## Grading Scale
+
+| Grade | Meaning |
+|-|-|
+| A | Excellent — meets all standards, no known issues |
+| B | Good — minor issues, no action required |
+| C | Acceptable — known gaps, improvement planned |
+| D | Below standard — active remediation needed |
+| F | Failing — blocking issues, immediate attention |
+
+## Module Grades
+
+| Module | Path | Code Quality | Test Coverage | Doc Freshness | Arch Compliance | Overall |
+|-|-|-|-|-|-|-|
+{{#modules}}
+| {{name}} | `{{path}}` | — | — | — | — | — |
+{{/modules}}
+
+## How to Update
+
+1. Run the project's test coverage tool and update the Test Coverage column.
+2. Check that module documentation reflects current behavior (Doc Freshness).
+3. Verify imports respect layer boundaries (Arch Compliance).
+4. Assess code against project conventions (Code Quality).
+5. Assign an overall grade based on the weakest dimension.
+
+## Golden Principles
+
+These are opinionated rules that keep the codebase consistent for future agent runs. Violations should be caught by linters where possible.
+
+1. **Shared utilities over hand-rolled helpers** — Keep invariants centralized in shared packages. Don't duplicate logic across modules.
+2. **Validate at boundaries** — Parse and validate data at system edges (API inputs, external service responses). Internal code trusts typed interfaces.
+3. **No YOLO data probing** — Don't guess at data shapes. Use typed SDKs or validate with schemas.
+4. **One pattern per concern** — If the codebase has a pattern for something (error handling, logging, config loading), follow it. Don't introduce a second pattern.
+5. **Agent-legible naming** — Names should be self-documenting. Prefer `getUserById` over `get`, `PaymentService` over `Service`.
+
+<!-- EVOLVE: Add project-specific golden principles as patterns emerge -->
+<!-- EVOLVE: Update grades as automated scanning is configured -->

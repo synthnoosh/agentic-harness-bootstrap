@@ -193,11 +193,15 @@ Place at the repository root. Include:
 
 ### AGENTS.md
 
-Place at the repository root. Same core content as CLAUDE.md, structured for multi-agent consumption:
+Place at the repository root. This is the **map, not the manual** — a concise (~100 lines) entry point that gives agents orientation and pointers to deeper docs. Following the Progressive Disclosure principle (Principle 7):
 
-- Section headers that agents can parse programmatically.
-- Commands formatted as code blocks with explicit working directory.
+- Commands in a compact code block.
+- **"Where to Look" table** — Maps needs to documents (architecture → ARCHITECTURE.md, design decisions → docs/design-docs/, quality grades → docs/QUALITY_SCORE.md, etc.).
+- Architecture summary — brief, with a pointer to ARCHITECTURE.md for full details.
 - Boundary rules formatted as bullet lists with clear prefixes (ALWAYS:, ASK:, NEVER:).
+- Harness maintenance rules including knowledge base upkeep.
+
+AGENTS.md should NOT duplicate the full conventions, key paths, or detailed descriptions found in CLAUDE.md. It provides orientation; CLAUDE.md provides depth.
 
 ---
 
@@ -236,7 +240,49 @@ For brownfield repos, populate from the Phase 1 analysis.
 
 ---
 
-## Step 6: docs/ Structure
+## Step 6: docs/ Knowledge Base
+
+Generate a structured knowledge base following the "Repository as System of Record" principle (Principle 6). This is the single source of truth for everything agents need beyond CLAUDE.md and ARCHITECTURE.md.
+
+### Knowledge Base Index
+
+Create `docs/README.md` from `templates/docs/knowledge-base-index.md.tmpl`. This is the entry point for the knowledge base.
+
+### Design Docs Directory
+
+Create `docs/design-docs/` with:
+
+**index.md** — Catalog of all design documents:
+
+```markdown
+# Design Documents
+
+| Doc | Status | Summary |
+|-|-|-|
+| [core-beliefs.md](./core-beliefs.md) | Active | Agent-first operating principles |
+```
+
+**core-beliefs.md** — From `templates/docs/core-beliefs.md.tmpl`. These are the agent-first operating principles that govern how agents work in this repository.
+
+### Execution Plans Directory
+
+Create `docs/exec-plans/` with:
+
+- `active/` — Plans currently being executed (create with `.gitkeep`)
+- `completed/` — Finished plans kept for reference (create with `.gitkeep`)
+- `template.md` — From `templates/docs/exec-plan-template.md.tmpl`
+
+### References Directory
+
+Create `docs/references/` with a `.gitkeep`. This directory holds LLM-optimized documentation for key dependencies. When a dependency's docs are needed frequently, download or write a focused summary here rather than relying on web access.
+
+### Quality Score
+
+Create `docs/QUALITY_SCORE.md` from `templates/docs/QUALITY_SCORE.md.tmpl`. Seed the module table from the module list in the repo profile. Initial grades are left as "—" for the engineer to fill in.
+
+### Tech Debt Tracker
+
+Create `docs/tech-debt-tracker.md` from `templates/docs/tech-debt-tracker.md.tmpl`.
 
 ### ADR Directory
 
@@ -301,18 +347,18 @@ If no CI provider is configured, skip this step and note it in the Phase 3 repor
 Embed the following rules in **every generated agent instruction file** (CLAUDE.md, AGENTS.md):
 
 ```markdown
-## Harness Evolution
+## Harness Maintenance
 
-These files are living documents. Update them as the project evolves:
-
-- **After adding a new module**: Update ARCHITECTURE.md module map and dependency rules.
-- **After adding a new command**: Update the Commands section in CLAUDE.md and AGENTS.md.
-- **After an agent makes a mistake**: Add a rule to the Boundaries section to prevent recurrence.
-- **After an architectural decision**: Create a new ADR in docs/adr/.
-- **On session start**: Quick-check that commands still work and module list matches reality.
+1. **Module added** → Update ARCHITECTURE.md module map and add a row to docs/QUALITY_SCORE.md.
+2. **Command changed** → Update Commands in CLAUDE.md and AGENTS.md.
+3. **Agent mistake** → Add a Boundaries rule to prevent recurrence. If recurring, promote to a linter rule.
+4. **Architectural decision** → Create ADR in docs/adr/.
+5. **Design rationale captured** → Write or update doc in docs/design-docs/ and link from index.
+6. **Complex work starting** → Create execution plan in docs/exec-plans/active/.
+7. **Session start** → Drift check: modules match directories, commands work, docs are fresh.
 ```
 
-These rules ensure the harness stays in sync with the codebase over time.
+These rules ensure the harness and knowledge base stay in sync with the codebase. The key insight: human taste is captured once, then enforced continuously on every change.
 
 ---
 
@@ -335,8 +381,17 @@ By the end of this phase, the following files should be queued or written:
 | File | Brownfield | Greenfield |
 |-|-|-|
 | CLAUDE.md | Generated or merged | Generated |
-| AGENTS.md | Generated or merged | Generated |
+| AGENTS.md (progressive disclosure) | Generated or merged | Generated |
 | ARCHITECTURE.md | Generated or merged | Generated (minimal + EVOLVE markers) |
+| docs/README.md | Generated | Generated |
+| docs/design-docs/index.md | Generated | Generated |
+| docs/design-docs/core-beliefs.md | Generated | Generated |
+| docs/exec-plans/template.md | Generated | Generated |
+| docs/exec-plans/active/.gitkeep | Generated | Generated |
+| docs/exec-plans/completed/.gitkeep | Generated | Generated |
+| docs/references/.gitkeep | Generated | Generated |
+| docs/QUALITY_SCORE.md | Generated | Generated |
+| docs/tech-debt-tracker.md | Generated | Generated |
 | docs/adr/template.md | Generated | Generated |
 | docs/adr/001-adopt-harness-engineering.md | Generated | Generated |
 | .editorconfig | Generated if missing | Generated |

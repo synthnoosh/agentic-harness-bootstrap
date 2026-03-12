@@ -98,7 +98,7 @@ jobs:
           #!/usr/bin/env bash
           set -euo pipefail
 
-          files=("CLAUDE.md" "AGENTS.md" ".github/copilot-instructions.md")
+          files=("CLAUDE.md" "AGENTS.md")
           errors=0
 
           # Extract major section headers (## level) from each file

@@ -9,11 +9,11 @@ It does not contain application code. It produces artifacts for other repos.
 | Directory | Contains | Does NOT belong here |
 |-|-|-|
 | `playbooks/` | Sequential phases (00-03) that agents execute in order. Each playbook is a set of instructions for one phase of the bootstrap process. | Templates, reference material, or educational content. |
-| `templates/` | Mustache-style `{{variable}}` templates for artifacts emitted into target repos. Each template has YAML frontmatter documenting its variables. Subdirs: `ci/` (CI pipelines), `pre-commit/` (git hooks), `lint/` (linter configs). | Bootstrap-repo-specific files. These are fill-in-the-blank artifacts for *other* repos. |
+| `templates/` | Mustache-style `{{variable}}` templates for artifacts emitted into target repos. Each template has YAML frontmatter documenting its variables. Subdirs: `ci/` (CI pipelines), `pre-commit/` (git hooks), `lint/` (linter configs), `docs/` (knowledge base artifacts), `monorepo/` (workspace configs). | Bootstrap-repo-specific files. These are fill-in-the-blank artifacts for *other* repos. |
 | `reference/` | Educational material agents read for context — principles, guides, conventions. | Executable instructions. Agents read these to learn, not to follow step-by-step. |
 | `examples/` | Complete example outputs for different stacks (Go, PHP/Laravel, React). Used as ground truth for validation. | Partial or work-in-progress examples. Every example must be a complete, valid output. |
 | `scripts/` | Internal validation scripts for this repo (example integrity checks, sync verification). | Target-repo scripts — those are generated from templates. |
-| `.github/` | GitHub-specific config: Copilot instructions, CI workflow for this repo. | CI templates for target repos (those live in `templates/ci/`). |
+| `.github/` | GitHub-specific config: CI workflow for this repo. | CI templates for target repos (those live in `templates/ci/`). |
 
 ## Playbook Chain
 

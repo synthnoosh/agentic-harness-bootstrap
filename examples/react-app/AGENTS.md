@@ -1,6 +1,6 @@
 # Dashboard UI
 
-<!-- Keep in sync with CLAUDE.md and .github/copilot-instructions.md -->
+<!-- Keep in sync with CLAUDE.md -->
 
 React SPA for analytics and data visualization. TypeScript, Vite, React Router, Zustand.
 

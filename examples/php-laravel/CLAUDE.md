@@ -1,6 +1,6 @@
 # Storefront
 
-<!-- Keep in sync with AGENTS.md and .github/copilot-instructions.md -->
+<!-- Keep in sync with AGENTS.md -->
 
 Laravel e-commerce application. Handles product catalog, shopping cart, checkout, and order management. Uses MySQL for persistence, Redis for sessions and cache, and Stripe for payments.
 

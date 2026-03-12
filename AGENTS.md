@@ -92,7 +92,7 @@ Before writing any file in the target repo:
 
 ## Reference
 
-Consult `reference/harness-principles.md` for background on the five harness engineering principles that guide artifact generation.
+Consult `reference/harness-principles.md` for background on the ten harness engineering principles that guide artifact generation.
 
 Consult `reference/lint-remediation-guide.md` for guidance on configuring linters and resolving common lint issues in generated files.
 

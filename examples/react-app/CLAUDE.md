@@ -1,6 +1,6 @@
 # Dashboard UI
 
-<!-- Keep in sync with AGENTS.md and .github/copilot-instructions.md -->
+<!-- Keep in sync with AGENTS.md -->
 
 React single-page application for analytics and data visualization. Built with TypeScript, Vite, React Router, and Zustand for state management. Communicates with a REST API backend.
 

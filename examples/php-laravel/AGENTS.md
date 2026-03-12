@@ -1,6 +1,6 @@
 # Storefront
 
-<!-- Keep in sync with CLAUDE.md and .github/copilot-instructions.md -->
+<!-- Keep in sync with CLAUDE.md -->
 
 Laravel e-commerce application. Product catalog, shopping cart, checkout, and order management.
 

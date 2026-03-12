@@ -16,16 +16,15 @@ Compatible with Claude Code, Codex, OpenCode and GitHub Copilot workflows.
 
 | Artifact | Purpose |
 |-|-|
-| `CLAUDE.md` | Claude Code instructions — commands, conventions, boundaries |
-| `AGENTS.md` | OpenAI Codex instructions — same content, Codex format |
-| `.github/copilot-instructions.md` | GitHub Copilot instructions |
+| `CLAUDE.md` | Claude Code instructions — commands, conventions, boundaries, knowledge base pointers |
+| `AGENTS.md` | Agent instructions — concise map with progressive disclosure (commands, "Where to Look" table, boundaries) |
 | `ARCHITECTURE.md` | Module map, layer diagram, dependency rules |
+| `docs/` knowledge base | Structured system of record: design docs, core beliefs, quality scoring, tech debt tracking, execution plans, dependency references, ADRs |
 | Task runner (`check` / `verify`) | Composite commands for fast feedback loop and harness verification — uses your existing task runner (npm scripts, Cargo, Make, etc.) |
 | Pre-commit hooks | Stack-specific git hooks (husky, pre-commit framework, GrumPHP) |
 | Lint configuration | Strict linter config for your stack (ESLint, Ruff, golangci-lint, PHPStan) |
-| `scripts/verify-harness.sh` | Persistent harness integrity checks |
-| `docs/adr/` | ADR directory with template and first record |
-| CI integration | Staged agent-lint pipeline for GitHub Actions or GitLab CI |
+| `scripts/verify-harness.sh` | Persistent harness integrity checks (including knowledge base and freshness signals) |
+| CI integration | Staged agent-lint pipeline with knowledge base checks for GitHub Actions or GitLab CI |
 
 For **greenfield repos** (empty or new projects), it also scaffolds recommended directory structure, `.editorconfig`, and starter task runner.
 
@@ -67,7 +66,7 @@ The bootstrap runs four sequential phases. Each phase produces output that the n
 
 Every generated file includes **harness evolution rules** — standing instructions that tell agents to keep the harness current as the project grows.
 
-## The 5 Harness Engineering Principles
+## The 10 Harness Engineering Principles
 
 | # | Principle | In practice |
 |-|-|-|
@@ -76,6 +75,11 @@ Every generated file includes **harness evolution rules** — standing instructi
 | 3 | **Three-tier boundaries** | Every harness defines Always / Ask / Never action categories |
 | 4 | **Fail-fast feedback** | Fast checks first (lint, typecheck), slow checks later (integration) |
 | 5 | **Architecture as map** | `ARCHITECTURE.md` tells agents where things are, not why they exist |
+| 6 | **Repository as system of record** | If agents can't see it in the repo, it doesn't exist |
+| 7 | **Progressive disclosure** | `AGENTS.md` is the map (~100 lines); deeper docs are linked, not inlined |
+| 8 | **Mechanical enforcement** | When docs fail to prevent mistakes, promote the rule to a linter or test |
+| 9 | **Entropy management** | Quality grades, recurring cleanup, golden principles — garbage-collect drift |
+| 10 | **Boring tech preference** | Stable, composable, well-documented tech reduces agent friction |
 
 See [`reference/harness-principles.md`](reference/harness-principles.md) for detailed explanations with examples.
 
@@ -98,10 +102,9 @@ The bootstrap is safe to run multiple times. Before writing any file, the agent 
 ```
 agentic-harness-bootstrap/
 ├── CLAUDE.md                    # Bootstrap instructions for Claude Code
-├── AGENTS.md                    # Bootstrap instructions for OpenAI Codex
+├── AGENTS.md                    # Bootstrap instructions for agents
 ├── ARCHITECTURE.md              # Architecture map of THIS repo
 ├── .github/
-│   ├── copilot-instructions.md  # Bootstrap instructions for GitHub Copilot
 │   └── workflows/ci.yml        # CI for this repo
 ├── playbooks/
 │   ├── 00-discover.md           # Phase 0: Detect stack, structure, conventions
@@ -109,20 +112,26 @@ agentic-harness-bootstrap/
 │   ├── 02-generate.md           # Phase 2: Emit harness artifacts
 │   └── 03-verify.md             # Phase 3: Validate everything works
 ├── templates/
-│   ├── CLAUDE.md.tmpl           # Target repo Claude Code instructions
-│   ├── AGENTS.md.tmpl           # Target repo Codex instructions
-│   ├── copilot-instructions.md.tmpl
+│   ├── CLAUDE.md.tmpl           # Target repo agent instructions (detailed)
+│   ├── AGENTS.md.tmpl           # Target repo agent map (progressive disclosure)
 │   ├── ARCHITECTURE.md.tmpl     # Architecture map template
 │   ├── Makefile.tmpl            # Makefile template (used when no task runner exists)
 │   ├── verify-harness.sh.tmpl   # Harness verification script
 │   ├── adr-template.md.tmpl     # ADR template
+│   ├── docs/                    # Knowledge base templates
+│   │   ├── knowledge-base-index.md.tmpl
+│   │   ├── core-beliefs.md.tmpl
+│   │   ├── QUALITY_SCORE.md.tmpl
+│   │   ├── tech-debt-tracker.md.tmpl
+│   │   └── exec-plan-template.md.tmpl
 │   ├── pre-commit/              # Pre-commit hook templates per stack
 │   ├── lint/                    # Linter config templates per stack
+│   ├── monorepo/                # Workspace config templates
 │   └── ci/                      # CI pipeline templates
 ├── scripts/
 │   └── check-examples.sh        # Validates examples match template structure
 ├── reference/
-│   ├── harness-principles.md    # The 5 harness engineering principles
+│   ├── harness-principles.md    # The 10 harness engineering principles
 │   └── lint-remediation-guide.md
 └── examples/
     ├── go-service/              # Example output: Go microservice
@@ -132,7 +141,9 @@ agentic-harness-bootstrap/
 
 ## What Is Harness Engineering?
 
-Harness engineering is the discipline of building environments, feedback loops, and control systems that enable AI agents to write reliable code at scale. Rather than hoping agents produce correct code, you build deterministic guardrails: fast linters with remediation messages, architectural maps agents can navigate, and three-tier boundaries that define what agents may always do, must ask about, or should never attempt.
+Harness engineering is the discipline of building environments, feedback loops, and control systems that enable AI agents to write reliable code at scale. Rather than hoping agents produce correct code, you build deterministic guardrails: fast linters with remediation messages, architectural maps agents can navigate, three-tier boundaries that define what agents may always do, must ask about, or should never attempt, and a structured knowledge base that makes the entire project legible to agents.
+
+The key insight: **humans steer, agents execute**. The engineer's primary job is not to write code, but to design environments, specify intent, and build feedback loops that allow agents to do reliable work. When something fails, the fix is almost never "try harder" — it's "what capability is missing, and how do we make it legible and enforceable?"
 
 This repo packages those practices into a repeatable bootstrap process that works with any AI coding tool.
 
@@ -142,7 +153,7 @@ This repo practices its own principles:
 
 - **CI pipeline** (`.github/workflows/ci.yml`) validates template frontmatter, checks example integrity, and verifies instruction file synchronization on every PR
 - **Example integrity** (`scripts/check-examples.sh`) ensures example outputs structurally match what templates define
-- **Instruction sync** — CI verifies that `CLAUDE.md`, `AGENTS.md`, and `.github/copilot-instructions.md` have matching section structure
+- **Instruction sync** — CI verifies that `CLAUDE.md` and `AGENTS.md` have matching command references
 
 ## Contributing
 

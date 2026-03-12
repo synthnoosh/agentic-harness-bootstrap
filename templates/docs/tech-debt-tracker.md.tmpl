@@ -1,0 +1,35 @@
+---
+variables:
+  project_name: "Name of the project"
+---
+
+# Tech Debt Tracker — {{project_name}}
+
+Known technical debt with explicit remediation plans. Pay down continuously in small increments — don't let it compound.
+
+## Active Debt
+
+| ID | Area | Description | Impact | Remediation | Target Date |
+|-|-|-|-|-|-|
+| TD-001 | — | — | — | — | — |
+
+## Resolved Debt
+
+| ID | Area | Description | Resolved Date | Resolution |
+|-|-|-|-|-|
+| — | — | — | — | — |
+
+## Principles
+
+- **Track, don't ignore.** Every known compromise gets a row in Active Debt.
+- **Small, continuous payments.** Prefer daily 15-minute cleanups over quarterly refactors.
+- **Promote patterns to linters.** When a debt item represents a recurring anti-pattern, encode the fix as a linter rule and resolve the debt.
+- **Grade impact honestly.** Use the Quality Score to identify which debt is actually hurting.
+
+## How Agents Should Use This
+
+- Before starting work in a module, check if there's active debt. If your task intersects with a debt item, consider addressing it as part of the work.
+- After completing work, check if you introduced new debt. If so, add a row.
+- Don't prioritize debt remediation over the current task unless instructed to.
+
+<!-- EVOLVE: Add project-specific debt items as they are identified -->

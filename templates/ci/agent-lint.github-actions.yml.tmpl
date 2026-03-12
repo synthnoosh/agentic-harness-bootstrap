@@ -177,3 +177,20 @@ jobs:
             exit 1
           fi
           echo "All module paths verified."
+
+      - name: Check knowledge base structure
+        run: |
+          echo "Verifying docs/ knowledge base..."
+          errors=0
+          for path in docs/README.md docs/design-docs/index.md docs/design-docs/core-beliefs.md \
+                      docs/QUALITY_SCORE.md docs/tech-debt-tracker.md docs/adr docs/exec-plans docs/references; do
+            if [ ! -e "$path" ]; then
+              echo "WARNING: Knowledge base path missing: $path"
+            fi
+          done
+          # Check for STALE markers
+          stale=$(grep -rn '<!-- STALE:' --include='*.md' . 2>/dev/null | wc -l || echo 0)
+          if [ "$stale" -gt 0 ]; then
+            echo "INFO: $stale STALE marker(s) found in docs — review recommended."
+          fi
+          echo "Knowledge base check complete."

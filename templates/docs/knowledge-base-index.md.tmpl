@@ -1,0 +1,44 @@
+---
+variables:
+  project_name: "Name of the project"
+---
+
+# Knowledge Base — {{project_name}}
+
+This directory is the system of record for all project knowledge that agents need to operate effectively. Everything here is versioned alongside the code.
+
+## Directory Structure
+
+```
+docs/
+├── design-docs/          # Design decisions and rationale
+│   ├── index.md          # Catalog of all design docs
+│   └── core-beliefs.md   # Agent-first operating principles
+├── exec-plans/           # Execution plans for complex work
+│   ├── active/           # Plans currently being executed
+│   └── completed/        # Finished plans (kept for reference)
+├── references/           # LLM-optimized docs for key dependencies
+├── adr/                  # Architecture Decision Records
+│   └── template.md       # ADR template
+├── QUALITY_SCORE.md      # Quality grades per module
+└── tech-debt-tracker.md  # Known debt with remediation plans
+```
+
+## How to Use
+
+- **Starting a new task?** Check `exec-plans/active/` for related work and `QUALITY_SCORE.md` for the health of the area you're touching.
+- **Making a design decision?** Write it up in `design-docs/` and link from `design-docs/index.md`.
+- **Learning about a dependency?** Check `references/` for LLM-optimized docs before searching the web.
+- **Creating an execution plan?** Use the template in `exec-plans/` for any work spanning multiple PRs.
+- **Making an architectural decision?** Create an ADR in `adr/` using the template.
+
+## Freshness
+
+Documents should reflect the current state of the codebase. If you notice a doc is stale:
+
+1. Update it if the fix is obvious.
+2. Add `<!-- STALE: description of what's outdated -->` if you can't fix it now.
+3. Open a cleanup task.
+
+<!-- EVOLVE: Add product-specs/ directory when product requirements stabilize -->
+<!-- EVOLVE: Add generated/ directory for auto-generated docs (DB schemas, API specs) -->

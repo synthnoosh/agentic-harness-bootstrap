@@ -78,21 +78,40 @@ Do not do these under any circumstances.
 - {{.}}
 {{/never_rules}}
 
+## Knowledge Base
+
+Project knowledge lives in `docs/` — the system of record for everything agents need beyond this file.
+
+| What | Where |
+|-|-|
+| Design decisions and rationale | [docs/design-docs/](./docs/design-docs/) |
+| Operating principles | [docs/design-docs/core-beliefs.md](./docs/design-docs/core-beliefs.md) |
+| Quality grades per module | [docs/QUALITY_SCORE.md](./docs/QUALITY_SCORE.md) |
+| Active execution plans | [docs/exec-plans/active/](./docs/exec-plans/active/) |
+| Known tech debt | [docs/tech-debt-tracker.md](./docs/tech-debt-tracker.md) |
+| Architecture Decision Records | [docs/adr/](./docs/adr/) |
+| Dependency reference docs | [docs/references/](./docs/references/) |
+
 ## Harness Maintenance
 
 These are standing orders. Apply them automatically whenever the triggering condition is met.
 
-1. **After adding a module** → Update the Module Map table in `ARCHITECTURE.md` with the new module's name, path, layer, and description.
+1. **After adding a module** → Update the Module Map in `ARCHITECTURE.md` and add a row to `docs/QUALITY_SCORE.md`.
 
 2. **After adding a command** → Update the Commands section in this file and in `AGENTS.md`.
 
-3. **After an agent mistake** → Add a rule to the appropriate Boundaries tier (Always / Ask / Never) in this file to prevent recurrence.
+3. **After an agent mistake** → Add a rule to the appropriate Boundaries tier (Always / Ask / Never) to prevent recurrence.
 
-4. **After an architectural decision** → Create a new ADR in `docs/adr/` using the ADR template. Number it sequentially.
+4. **After an architectural decision** → Create a new ADR in `docs/adr/` using the template. Number sequentially.
 
-5. **On session start** → Perform a quick drift check:
+5. **After capturing design rationale** → Write or update a doc in `docs/design-docs/` and link from `docs/design-docs/index.md`.
+
+6. **Before starting complex work** → Create an execution plan in `docs/exec-plans/active/` using the template.
+
+7. **On session start** → Drift check:
    - Verify modules listed in `ARCHITECTURE.md` match actual directories.
    - Confirm commands in this file still work.
+   - Check `docs/QUALITY_SCORE.md` for the health of areas you'll touch.
    - Flag any staleness found.
 
 <!-- EVOLVE: Add new conventions as patterns emerge from code review -->

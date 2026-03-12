@@ -65,8 +65,12 @@ Derive these from the codebase's maturity, test coverage, and risk areas.
 
 Compare what the project already has against what a complete harness provides:
 
-- [ ] Agent instruction files (CLAUDE.md, AGENTS.md, copilot-instructions.md)
+- [ ] Agent instruction files (CLAUDE.md, AGENTS.md)
 - [ ] ARCHITECTURE.md
+- [ ] Knowledge base (`docs/` directory with design-docs, exec-plans, references)
+- [ ] Core beliefs (`docs/design-docs/core-beliefs.md`)
+- [ ] Quality scoring (`docs/QUALITY_SCORE.md`)
+- [ ] Tech debt tracking (`docs/tech-debt-tracker.md`)
 - [ ] ADR directory and template
 - [ ] CI agent-lint job
 - [ ] .editorconfig
@@ -74,6 +78,7 @@ Compare what the project already has against what a complete harness provides:
 - [ ] Pre-commit hooks (husky/lint-staged, pre-commit framework, grumphp)
 - [ ] Lint configuration (eslint, ruff, golangci-lint, phpstan)
 - [ ] Composite `check` command (runs format → lint → build → test in sequence)
+- [ ] Architectural enforcement linters (custom rules for layer violations)
 
 Mark each as **exists**, **partial**, or **missing**.
 
@@ -206,6 +211,17 @@ Tag prescriptive sections with `<!-- EVOLVE: description -->` so they can be ref
 
 ---
 
+### 8. Knowledge Base Assessment
+
+Evaluate the project's readiness for a structured knowledge base:
+
+- **Existing documentation**: Check for any docs/, documentation/, or wiki/ directories. Note what exists and what format it's in.
+- **Design decisions**: Look for ADRs, design docs, RFCs, or decision logs in any format. These will be migrated to the knowledge base structure.
+- **Dependency documentation**: Identify key dependencies that would benefit from LLM-optimized reference docs in `docs/references/`.
+- **Quality signals**: Assess test coverage, lint compliance, and documentation freshness across modules to seed initial quality grades.
+
+---
+
 ## Output
 
 The analysis output is consumed by Phase 2 (Generate). Ensure all of the following are ready:
@@ -219,6 +235,7 @@ The analysis output is consumed by Phase 2 (Generate). Ensure all of the followi
 - Pre-commit hook configuration (detected or prescribed)
 - Lint configuration strictness level (minimal, moderate, or strict)
 - Composite `check` command definition (format → lint → build → test)
+- Knowledge base assessment (existing docs, design decisions, dep docs, quality signals)
 - Monorepo analysis (if applicable): per-package profiles, cross-package dependency map, shared vs. package-specific conventions, workspace-level boundaries
 
 Do not generate files yet — that is Phase 2's responsibility.

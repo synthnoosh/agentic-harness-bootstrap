@@ -139,7 +139,48 @@ else
   warn "docs/adr/ not found — skipping ADR check"
 fi
 
-# ── 5. EVOLVE marker report ─────────────────────────────────────────────────
+# ── 5. Knowledge base structure ─────────────────────────────────────────────
+# Verify the docs/ knowledge base exists and has required files.
+
+section "Knowledge base structure"
+
+kb_required=(
+  "docs/README.md"
+  "docs/design-docs/index.md"
+  "docs/design-docs/core-beliefs.md"
+  "docs/QUALITY_SCORE.md"
+  "docs/tech-debt-tracker.md"
+  "docs/adr"
+  "docs/exec-plans"
+  "docs/references"
+)
+
+for kb_path in "${kb_required[@]}"; do
+  if [[ -e "$kb_path" ]]; then
+    pass "Knowledge base: $kb_path exists"
+  else
+    warn "Knowledge base: $kb_path missing"
+  fi
+done
+
+# ── 6. Freshness signals ──────────────────────────────────────────────────
+# Check for STALE markers across all docs.
+
+section "Freshness signals"
+
+stale_count=0
+while IFS= read -r match; do
+  ((stale_count++))
+  warn "STALE marker: $match"
+done < <(grep -rn '<!-- STALE:' --include='*.md' . 2>/dev/null || true)
+
+if [[ $stale_count -eq 0 ]]; then
+  pass "No STALE markers found"
+else
+  warn "$stale_count STALE marker(s) found — review and update"
+fi
+
+# ── 7. EVOLVE marker report ─────────────────────────────────────────────────
 # Surface all <!-- EVOLVE: ... --> markers for review.
 
 section "EVOLVE markers"
@@ -154,7 +195,7 @@ if [[ $evolve_count -eq 0 ]]; then
   pass "No EVOLVE markers found"
 fi
 
-# ── 6. Summary ──────────────────────────────────────────────────────────────
+# ── 8. Summary ──────────────────────────────────────────────────────────────
 
 echo ""
 echo "════════════════════════════════════════"

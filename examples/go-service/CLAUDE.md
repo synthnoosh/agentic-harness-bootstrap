@@ -1,6 +1,6 @@
 # Order Service
 
-<!-- Keep in sync with AGENTS.md and .github/copilot-instructions.md -->
+<!-- Keep in sync with AGENTS.md -->
 
 Go API microservice for order management. Exposes REST endpoints for creating, updating, and querying orders. Uses PostgreSQL for persistence and Redis for caching.
 
