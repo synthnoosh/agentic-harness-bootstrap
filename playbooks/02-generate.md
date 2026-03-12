@@ -56,9 +56,11 @@ For repos where `greenfield` is true, generate the foundational project structur
 
 **CRITICAL**: Only generate the **minimum viable skeleton** — the smallest set of files needed for `build`, `test`, and `lint` commands to pass. Do NOT create domain-specific directories or modules based on the user's feature description.
 
-For example, a NestJS project gets:
-- `src/main.ts`, `src/app.module.ts`, `src/app.controller.ts`, `src/app.service.ts`, `src/app.controller.spec.ts`
-- `test/` for e2e tests
+For example, an ElysiaJS project gets:
+- `src/index.ts` (Elysia app entry point with health route)
+- `test/` for tests
+
+Use templates from `templates/monorepo/elysia-app-package.json.tmpl` and `templates/monorepo/elysia-app-index.ts.tmpl`.
 
 It does NOT get: `src/market/`, `src/auth/`, `src/credits/`, etc. Those emerge when the features are actually built.
 
@@ -66,15 +68,15 @@ It does NOT get: `src/market/`, `src/auth/`, `src/credits/`, etc. Those emerge w
 
 If `monorepo` is true in the repo profile, generate the workspace structure before the app skeleton.
 
-**Turborepo + pnpm** (generate from `templates/monorepo/`):
+**Turborepo + Bun** (generate from `templates/monorepo/`):
 
 ```
-pnpm-workspace.yaml        # from templates/monorepo/pnpm-workspace.yaml.tmpl
 turbo.json                  # from templates/monorepo/turbo.json.tmpl
-package.json                # Root package.json with workspace scripts
+bunfig.toml                 # from templates/monorepo/bunfig.toml.tmpl
+package.json                # Root package.json with workspaces and workspace scripts
 apps/
   {app-name}/               # The primary app — generate the framework skeleton here
-    package.json             # App-specific package.json
+    package.json             # App-specific package.json (ElysiaJS for APIs)
     tsconfig.json            # App-specific tsconfig
     src/                     # Framework skeleton (minimal)
     test/                    # Test directory
@@ -87,9 +89,9 @@ docs/
 For monorepos, all harness artifacts (CLAUDE.md, AGENTS.md, ARCHITECTURE.md) go at the **workspace root**. Per-package agent files are only generated when packages have distinct stacks.
 
 Commands in agent files should use workspace-level invocations:
-- `pnpm build` / `turbo build` (not `npm run build`)
-- `pnpm test` / `turbo test`
-- `pnpm lint` / `turbo lint`
+- `bun run build` / `turbo build` (not `npm run build`)
+- `bun test` / `turbo test`
+- `bun run lint` / `turbo lint`
 
 ### Single-Package Scaffolding
 
@@ -134,7 +136,7 @@ clean:
 	$(CLEAN_CMD)
 ```
 
-Adapt the task runner to the ecosystem (Makefile for Go/C/Python, npm scripts for Node, Cargo aliases for Rust). For **turbo monorepos**, the Makefile delegates to `turbo`/`pnpm` commands.
+Adapt the task runner to the ecosystem (Makefile for Go/C/Python, npm scripts for Node, Cargo aliases for Rust). For **turbo monorepos**, the Makefile delegates to `turbo`/`bun` commands.
 
 ---
 
@@ -466,7 +468,7 @@ These rules ensure the harness and knowledge base stay in sync with the codebase
 
 If `monorepo` is true in the repo profile, generate workspace-aware artifacts:
 
-- **Root-level agent files**: Generate root CLAUDE.md and AGENTS.md containing workspace-wide commands (e.g., `pnpm build`, `turbo build`, `cargo build --workspace`) and shared conventions that apply across all packages.
+- **Root-level agent files**: Generate root CLAUDE.md and AGENTS.md containing workspace-wide commands (e.g., `bun run build`, `turbo build`, `cargo build --workspace`) and shared conventions that apply across all packages.
 - **Per-package agent files**: If workspace packages have distinct stacks or conventions, generate package-level agent instruction files within each package directory. These contain package-specific commands, conventions, and boundaries.
 - **Root ARCHITECTURE.md**: Map all workspace packages and their inter-package relationships. Include a package dependency diagram and document which packages are libraries vs. applications.
 - **Per-package ARCHITECTURE.md**: For each package with sufficient complexity, generate an ARCHITECTURE.md that maps the internal module structure within that package.
@@ -505,8 +507,8 @@ By the end of this phase, the following files should be queued or written:
 | scripts/verify-harness.sh | Generated (executable) | Generated (executable) |
 | CI agent-lint job | Added if CI exists | Skipped unless CI exists |
 | Directory scaffolding | N/A | Generated (minimal skeleton only) |
-| pnpm-workspace.yaml (monorepo) | N/A | Generated if turbo + pnpm |
-| turbo.json (monorepo) | N/A | Generated if turbo + pnpm |
+| bunfig.toml (monorepo) | N/A | Generated if turbo + bun |
+| turbo.json (monorepo) | N/A | Generated if turbo + bun |
 | Per-package agent files (monorepo) | Generated if distinct stacks | Generated if distinct stacks |
 | Per-package ARCHITECTURE.md (monorepo) | Generated per package | Generated per package |
 

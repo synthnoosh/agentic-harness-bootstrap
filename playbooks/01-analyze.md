@@ -111,7 +111,7 @@ If `greenfield` is true, prescribe the following based on the engineer's answers
 - Agents treating placeholder directories as established boundaries
 
 Instead:
-- Create only what the framework requires to boot (e.g., `app.module.ts`, `main.ts` for NestJS)
+- Create only what the framework requires to boot (e.g., `src/index.ts` for ElysiaJS)
 - List planned domains in ARCHITECTURE.md under a `## Planned Modules` section with `<!-- EVOLVE -->` markers
 - Let modules emerge organically as features are built
 
@@ -124,7 +124,7 @@ Prescribe the **minimal** idiomatic project structure for the chosen language an
 - **React / Next.js**: `src/app/` or `src/pages/`, `src/lib/`
 - **Python (general)**: `src/{package}/`, `tests/`
 - **FastAPI**: `app/`, `tests/`
-- **NestJS**: `src/`, `test/`
+- **ElysiaJS**: `src/`, `test/`
 - **Rust**: `src/`
 - **Ruby on Rails**: `app/`, `config/`, `db/`, `lib/`, `spec/` or `test/`
 
@@ -136,14 +136,14 @@ If the language/framework is not listed, research the community-standard layout.
 
 If `monorepo` is true in the repo profile, prescribe a workspace structure using the chosen monorepo tooling:
 
-**Turborepo + pnpm** (recommended for Node/TS):
+**Turborepo + Bun** (recommended for Node/TS):
 ```
 apps/
-  {app-name}/          # The primary application (e.g., NestJS API)
+  {app-name}/          # The primary application (e.g., ElysiaJS API)
 packages/              # Shared libraries (created as needed)
 turbo.json             # Turborepo pipeline configuration
-pnpm-workspace.yaml    # Workspace package globs
-package.json           # Root package.json (workspace scripts, shared devDependencies)
+bunfig.toml            # Bun configuration
+package.json           # Root package.json (workspaces, workspace scripts, shared devDependencies)
 ```
 
 **Nx**:
@@ -185,7 +185,7 @@ Prescribe the standard toolchain. For monorepos, prescribe both workspace-level 
 
 - **Go**: `go build ./...`, `go test ./...`, `golangci-lint run`
 - **Node/TS (single)**: `npm run build`, `npm test`, `npm run lint`
-- **Node/TS (turbo monorepo)**: `pnpm build` / `turbo build`, `pnpm test` / `turbo test`, `pnpm lint` / `turbo lint`
+- **Node/TS (turbo monorepo)**: `bun run build` / `turbo build`, `bun test` / `turbo test`, `bun run lint` / `turbo lint`
 - **Python**: `python -m build`, `pytest`, `ruff check .`
 - **Rust**: `cargo build`, `cargo test`, `cargo clippy`
 

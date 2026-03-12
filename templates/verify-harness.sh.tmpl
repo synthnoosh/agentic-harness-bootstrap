@@ -74,7 +74,7 @@ extract_commands() {
   local file="$1"
   # Look for common command patterns: lines starting with backtick-fenced commands
   # or lines that match known patterns like make, npm, go, cargo, etc.
-  grep -E '^\s*(make |npm |npx |yarn |pnpm |go |cargo |python |pip |composer |php )' "$file" 2>/dev/null \
+  grep -E '^\s*(make |bun |npm |npx |yarn |pnpm |turbo |go |cargo |python |pip |composer |php )' "$file" 2>/dev/null \
     | sed 's/^[[:space:]]*//' | sort -u || true
 }
 

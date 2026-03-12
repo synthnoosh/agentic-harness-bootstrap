@@ -5,6 +5,7 @@ variables:
   test_cmd: "Command to run tests"
   build_cmd: "Command to build the project"
   node_version: "(Optional) Node.js version for JS/TS projects"
+  bun_version: "(Optional) Bun version for Bun projects"
   go_version: "(Optional) Go version for Go projects"
   python_version: "(Optional) Python version for Python projects"
 ---
@@ -26,6 +27,16 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+{{#bun_version}}
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: "{{bun_version}}"
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+{{/bun_version}}
 
 {{#node_version}}
       - name: Set up Node.js
@@ -66,6 +77,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+{{#bun_version}}
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: "{{bun_version}}"
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+{{/bun_version}}
+
 {{#node_version}}
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -104,6 +125,16 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+{{#bun_version}}
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: "{{bun_version}}"
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+{{/bun_version}}
 
 {{#node_version}}
       - name: Set up Node.js

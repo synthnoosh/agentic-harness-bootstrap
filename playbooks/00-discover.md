@@ -23,8 +23,8 @@ Scan the repository root and one level of subdirectories for **source files** (e
 When the repo is empty or near-empty, ask the engineer the following questions before proceeding:
 
 1. **What are you building?** — API service, web app, CLI tool, library, mobile app, or something else?
-2. **What language and framework?** — e.g., TypeScript + NestJS, Python + FastAPI, Go + stdlib, Rust + Axum.
-3. **Monorepo or single package?** — If monorepo: what workspace tooling? (Turborepo + pnpm, Nx, Yarn workspaces, Cargo workspace, Go workspace). For Node/TS projects, recommend **Turborepo + pnpm** as the default.
+2. **What language and framework?** — e.g., TypeScript + ElysiaJS, Python + FastAPI, Go + stdlib, Rust + Axum.
+3. **Monorepo or single package?** — If monorepo: what workspace tooling? (Turborepo + Bun, Nx, Yarn workspaces, Cargo workspace, Go workspace). For Node/TS projects, recommend **Turborepo + Bun** as the default.
 4. **What CI provider?** — GitHub Actions, GitLab CI, CircleCI, Jenkins, or none yet?
 5. **Any architectural preferences?** — Specific patterns (hexagonal, MVC, etc.), or constraints?
 
@@ -40,14 +40,14 @@ For each signal below, run the detection method and record findings.
 |-|-|
 | Language(s) | File extensions, config files (package.json, pyproject.toml, go.mod, Cargo.toml, build.sbt, pom.xml, *.csproj) |
 | Framework | Framework-specific files (next.config.*, angular.json, manage.py, rails, Gemfile with Rails, nuxt.config.*, vite.config.*, etc.) |
-| Package manager | Lock files (package-lock.json, yarn.lock, pnpm-lock.yaml, poetry.lock, Pipfile.lock, go.sum, Cargo.lock, Gemfile.lock) |
+| Package manager | Lock files (package-lock.json, yarn.lock, pnpm-lock.yaml, bun.lock, poetry.lock, Pipfile.lock, go.sum, Cargo.lock, Gemfile.lock) |
 | Build system | Makefile, build.gradle, CMakeLists.txt, npm scripts in package.json, Taskfile.yml, justfile, Rakefile |
 | Test framework | Test directories (test/, tests/, __tests__, spec/), config files (jest.config.*, pytest.ini, vitest.config.*, .rspec, phpunit.xml) |
 | CI provider | .github/workflows/, .gitlab-ci.yml, Jenkinsfile, .circleci/, bitbucket-pipelines.yml, .travis.yml |
-| Module structure | Top-level directories, src/ layout, monorepo workspace config (pnpm-workspace.yaml, lerna.json, nx.json, turbo.json) |
+| Module structure | Top-level directories, src/ layout, monorepo workspace config (workspaces in package.json, pnpm-workspace.yaml, lerna.json, nx.json, turbo.json) |
 | Existing agent files | CLAUDE.md, AGENTS.md, .cursorrules, .windsurfrules, .clinerules |
 | Code style | .eslintrc, .prettierrc, ruff.toml, .editorconfig, .stylelintrc, biome.json, rustfmt.toml, .golangci.yml |
-| Monorepo structure | Workspace config (`workspaces` in package.json, `pnpm-workspace.yaml`, go.work, Cargo workspace in Cargo.toml), multiple distinct apps/packages in subdirectories |
+| Monorepo structure | Workspace config (`workspaces` in package.json, `bunfig.toml`, `pnpm-workspace.yaml`, go.work, Cargo workspace in Cargo.toml), multiple distinct apps/packages in subdirectories |
 
 Run relevant build/test/lint commands to confirm they work. Record the exact invocations.
 
@@ -66,10 +66,10 @@ project_type: ""             # If greenfield: API, web-app, CLI, library, etc.
 # Language & framework
 languages: []                # All detected languages, e.g. ["TypeScript", "Python"]
 primary_language: ""         # The dominant language
-framework: ""                # Primary framework, e.g. "NestJS", "FastAPI"
+framework: ""                # Primary framework, e.g. "ElysiaJS", "FastAPI"
 
 # Toolchain
-package_manager: ""          # npm, yarn, pnpm, poetry, cargo, go modules, etc.
+package_manager: ""          # bun, npm, yarn, pnpm, poetry, cargo, go modules, etc.
 build_system: ""             # Build tool or task runner
 test_framework: ""           # jest, pytest, vitest, go test, etc.
 test_cmd: ""                 # Exact command to run tests
@@ -99,8 +99,8 @@ For brownfield repos, every field should be populated from detection.
 If a monorepo structure is detected (or specified during greenfield questioning), run discovery for each workspace package independently.
 
 - **Per-package profile**: Build a separate repo profile for each workspace package. Each package profile captures the package-specific language, framework, commands, and conventions.
-- **Root-level profile**: Build an aggregate root profile that captures shared CI configuration, shared tooling, and workspace-level commands (e.g., `pnpm -r build`, `cargo build --workspace`, `go build ./...`).
-- **Package enumeration**: Populate `workspace_packages` with `{name, path, language}` for every package found — parse the workspace config file (`pnpm-workspace.yaml`, `workspaces` in `package.json`, `go.work`, or `[workspace]` in `Cargo.toml`) and scan each listed path.
+- **Root-level profile**: Build an aggregate root profile that captures shared CI configuration, shared tooling, and workspace-level commands (e.g., `bun run build`, `turbo build`, `cargo build --workspace`, `go build ./...`).
+- **Package enumeration**: Populate `workspace_packages` with `{name, path, language}` for every package found — parse the workspace config file (`workspaces` in `package.json`, `bunfig.toml`, `pnpm-workspace.yaml`, `go.work`, or `[workspace]` in `Cargo.toml`) and scan each listed path.
 
 The root profile and per-package profiles together form the complete repo profile that subsequent phases consume.
 

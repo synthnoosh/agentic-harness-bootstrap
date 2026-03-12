@@ -6,6 +6,7 @@ variables:
 {
   "name": "{{project_name}}",
   "private": true,
+  "workspaces": ["apps/*", "packages/*"],
   "scripts": {
     "build": "turbo build",
     "test": "turbo test",
@@ -19,5 +20,5 @@ variables:
     "prettier": "^3.0.0",
     "turbo": "^2.0.0"
   },
-  "packageManager": "pnpm@9.15.0"
+  "packageManager": "bun@1.2.0"
 }

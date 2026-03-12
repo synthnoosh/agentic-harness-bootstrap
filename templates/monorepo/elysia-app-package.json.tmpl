@@ -1,0 +1,23 @@
+---
+variables:
+  app_name: "Name of the ElysiaJS app (e.g., api, server)"
+---
+
+{
+  "name": "{{app_name}}",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "bun --watch src/index.ts",
+    "build": "bun build src/index.ts --outdir dist --target bun",
+    "start": "bun dist/index.js",
+    "lint": "eslint src/",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "elysia": "^1.2.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  }
+}
